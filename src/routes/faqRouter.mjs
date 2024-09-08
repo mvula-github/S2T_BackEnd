@@ -24,4 +24,21 @@ faq.get("/api/faqs", (request, response) => {
   //return response.send(faqList);
 });
 
+faq.patch("/api/faqs/:id", (request, response) => {
+  const {
+    body,
+    params: { id },
+  } = request;
+
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId))
+    return response.status(400).send("Bad Request. Invalid Value");
+
+  const findUserIndex = faqList.findIndex((item) => item.id === parsedId);
+  if (findUserIndex === -1) return response.status(404).send("Not Found");
+
+  faqList[findUserIndex] = { ...faqList[findUserIndex], ...body };
+  return response.sendStatus(200);
+});
+
 export default faq;
