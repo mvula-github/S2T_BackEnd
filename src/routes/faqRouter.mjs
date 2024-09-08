@@ -69,4 +69,21 @@ faq.put("/api/faqs", findFAQIndex, (request, response) => {
   return response.sendStatus(200);
 });
 
+//---------------------------------------------POST------------------------------------------------------
+faq.post("/api/faqs", (request, response) => {
+  const { body } = request;
+
+  const newFAQ = { id: faqList[faqList.length - 1].id + 1, ...body };
+  faqList.push(newFAQ);
+
+  return response.status(200).send("Added Succesfully");
+});
+
+//---------------------------------------------DELETE------------------------------------------------------
+faq.delete("/api/faqs/:id", findFAQIndex, (request, response) => {
+  const { faqIndex } = request;
+  faqList.splice(faqIndex, 1);
+  return response.sendStatus(200);
+});
+
 export default faq;
