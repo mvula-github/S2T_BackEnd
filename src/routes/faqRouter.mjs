@@ -6,7 +6,7 @@ import {
   matchedData,
   checkSchema,
 } from "express-validator";
-import { inputFAQvalidation } from "../utils/FAQ/faqValidation.mjs";
+import { postFAQvalidation } from "../utils/FAQ/faqValidation.mjs";
 
 const faq = Router();
 
@@ -77,7 +77,7 @@ faq.put("/api/faqs/:id", findFAQIndex, (request, response) => {
 });
 
 //---------------------------------------------POST------------------------------------------------------
-faq.post("/api/faqs", checkSchema(inputFAQvalidation), (request, response) => {
+faq.post("/api/faqs", checkSchema(postFAQvalidation), (request, response) => {
   const errorResult = validationResult(request);
   console.log(errorResult);
 
