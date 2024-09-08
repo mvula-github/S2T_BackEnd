@@ -17,8 +17,9 @@ export const postFAQvalidation = {
       errorMessage:
         "Category name must be at least 3 characters with a max of 15 characters",
     },
+    trim: true,
     notEmpty: { errorMessage: "Category name must not be empty" },
-    isString: { errorMessage: "Category must only letters " },
+    isString: { errorMessage: "Category must include only letters " },
   },
   //Validation handling for incorrect Question input
   question: {
@@ -30,6 +31,7 @@ export const postFAQvalidation = {
       errorMessage:
         "The question must be at least 5 characters with a max of 32 characters",
     },
+    trim: true,
     notEmpty: { errorMessage: "Question name must not be empty" },
     isString: {
       errorMessage: "Question must include letters and numbers ",
@@ -45,6 +47,7 @@ export const postFAQvalidation = {
       errorMessage:
         "The answer name must be at least 5 characters with a max of 500 characters",
     },
+    trim: true,
     notEmpty: { errorMessage: "Answer name must not be empty" },
   },
 };

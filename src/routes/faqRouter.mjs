@@ -1,6 +1,11 @@
 import express, { response, Router } from "express";
 import { faqList } from "../utils/FAQ/faqData.mjs";
-import { validationResult, matchedData, checkSchema } from "express-validator";
+import {
+  validationResult,
+  body,
+  matchedData,
+  checkSchema,
+} from "express-validator";
 import { postFAQvalidation } from "../utils/FAQ/faqValidation.mjs";
 
 const faq = Router();
@@ -83,7 +88,7 @@ faq.post("/api/faqs", checkSchema(postFAQvalidation), (request, response) => {
   //To know if the data is valid or not
   const validData = matchedData(request);
 
-  const newFAQ = { id: faqList[faqList.length - 1].id + 1, ...data };
+  const newFAQ = { id: faqList[faqList.length - 1].id + 1, ...validData };
   faqList.push(newFAQ);
 
   return response.status(200).send("Added Succesfully");
