@@ -6,7 +6,7 @@ import {
   checkSchema,
 } from "express-validator";
 
-export const postFAQvalidation = {
+export const inputFAQvalidation = {
   //Validation handling for incorrect Category input
   category: {
     isLength: {

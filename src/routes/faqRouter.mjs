@@ -6,7 +6,7 @@ import {
   matchedData,
   checkSchema,
 } from "express-validator";
-import { postFAQvalidation } from "../utils/FAQ/faqValidation.mjs";
+import { inputFAQvalidation } from "../utils/FAQ/faqValidation.mjs";
 
 const faq = Router();
 
@@ -69,7 +69,7 @@ faq.patch("/api/faqs/:id", findFAQIndex, (request, response) => {
 });
 
 //---------------------------------------------PUT------------------------------------------------------
-faq.put("/api/faqs", findFAQIndex, (request, response) => {
+faq.put("/api/faqs/:id", findFAQIndex, (request, response) => {
   const { body, faqIndex } = request;
 
   faqList[faqIndex] = { id: faqList[faqIndex].id, ...body };
@@ -77,7 +77,7 @@ faq.put("/api/faqs", findFAQIndex, (request, response) => {
 });
 
 //---------------------------------------------POST------------------------------------------------------
-faq.post("/api/faqs", checkSchema(postFAQvalidation), (request, response) => {
+faq.post("/api/faqs", checkSchema(inputFAQvalidation), (request, response) => {
   const errorResult = validationResult(request);
   console.log(errorResult);
 
