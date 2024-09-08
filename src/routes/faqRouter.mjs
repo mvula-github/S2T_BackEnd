@@ -1,5 +1,7 @@
 import express, { response, Router } from "express";
 import { faqList } from "../utils/FAQ/faqData.mjs";
+import { validationResult, matchedData, checkSchema } from "express-validator";
+import { postFAQvalidation } from "../utils/FAQ/faqValidation.mjs";
 
 const faq = Router();
 
@@ -70,10 +72,18 @@ faq.put("/api/faqs", findFAQIndex, (request, response) => {
 });
 
 //---------------------------------------------POST------------------------------------------------------
-faq.post("/api/faqs", (request, response) => {
-  const { body } = request;
+faq.post("/api/faqs", checkSchema(postFAQvalidation), (request, response) => {
+  const errorResult = validationResult(request);
+  console.log(errorResult);
 
-  const newFAQ = { id: faqList[faqList.length - 1].id + 1, ...body };
+  //handle the validations i.e. doesn't add invalid data to database
+  if (!errorResult.isEmpty())
+    return response.status(400).send({ error: errorResult.array() });
+
+  //To know if the data is valid or not
+  const validData = matchedData(request);
+
+  const newFAQ = { id: faqList[faqList.length - 1].id + 1, ...data };
   faqList.push(newFAQ);
 
   return response.status(200).send("Added Succesfully");
