@@ -6,7 +6,10 @@ import {
   matchedData,
   checkSchema,
 } from "express-validator";
-import { postFAQvalidation } from "../utils/FAQ/faqValidation.mjs";
+import {
+  FAQvalidation,
+  patchFAQvalidation,
+} from "../utils/FAQ/faqValidation.mjs";
 
 const faq = Router();
 
@@ -61,23 +64,53 @@ faq.get("/api/faqs", (request, response) => {
 
 //---------------------------------------------PATCH------------------------------------------------------
 //to update the category, question, or answer for the faq page
-faq.patch("/api/faqs/:id", findFAQIndex, (request, response) => {
-  const { body, faqIndex } = request;
+faq.patch(
+  "/api/faqs/:id",
+  checkSchema(patchFAQvalidation),
+  findFAQIndex,
+  (request, response) => {
+    const errorResult = validationResult(request);
+    console.log(errorResult);
 
-  faqList[faqIndex] = { ...faqList[faqIndex], ...body };
-  return response.sendStatus(200);
-});
+    //handle the validations i.e. doesn't add invalid data to database
+    if (!errorResult.isEmpty())
+      return response.status(400).send({ error: errorResult.array() });
+
+    const { faqIndex } = request;
+
+    //To know if the data is valid or not
+    const validData = matchedData(request);
+
+    faqList[faqIndex] = { ...faqList[faqIndex], ...validData };
+    return response.sendStatus(200);
+  }
+);
 
 //---------------------------------------------PUT------------------------------------------------------
-faq.put("/api/faqs/:id", findFAQIndex, (request, response) => {
-  const { body, faqIndex } = request;
+faq.put(
+  "/api/faqs/:id",
+  checkSchema(FAQvalidation),
+  findFAQIndex,
+  (request, response) => {
+    const errorResult = validationResult(request);
+    console.log(errorResult);
 
-  faqList[faqIndex] = { id: faqList[faqIndex].id, ...body };
-  return response.sendStatus(200);
-});
+    //handle the validations i.e. doesn't add invalid data to database
+    if (!errorResult.isEmpty())
+      return response.status(400).send({ error: errorResult.array() });
+
+    const { faqIndex } = request;
+
+    //To know if the data is valid or not
+    const validData = matchedData(request);
+
+    faqList[faqIndex] = { id: faqList[faqIndex].id, ...validData };
+    return response.sendStatus(200);
+  }
+);
 
 //---------------------------------------------POST------------------------------------------------------
-faq.post("/api/faqs", checkSchema(postFAQvalidation), (request, response) => {
+faq.post("/api/faqs", checkSchema(FAQvalidation), (request, response) => {
   const errorResult = validationResult(request);
   console.log(errorResult);
 
