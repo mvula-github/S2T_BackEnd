@@ -7,11 +7,11 @@ import {
   checkSchema,
 } from "express-validator";
 import {
-  FAQvalidation,
+  mainFAQvalidation,
   patchFAQvalidation,
 } from "../utils/FAQ/faqValidation.mjs";
 
-const faq = Router();
+const app = Router();
 
 //middleware to find the faq index, to stop repeeaating teh same code
 const findFAQIndex = (request, response, next) => {
@@ -34,12 +34,12 @@ const findFAQIndex = (request, response, next) => {
 
 //---------------------------------------------GET------------------------------------------------------
 //displays all FAQ Q/A
-faq.get("/api/faqs", (request, response) => {
+app.get("/api/faqs", (request, response) => {
   response.status(200).send(faqList);
 });
 
 //display only one FAQ Q/A specified by the id
-faq.get("/api/faqs/:id", findFAQIndex, (request, response) => {
+app.get("/api/faqs/:id", findFAQIndex, (request, response) => {
   const { faqIndex } = request;
 
   const findFAQ = faqList[faqIndex];
@@ -49,8 +49,9 @@ faq.get("/api/faqs/:id", findFAQIndex, (request, response) => {
 });
 
 //query request method (i.e. filter)
-faq.get("/api/faqs", (request, response) => {
+app.get("/api/faqs", (request, response) => {
   console.log(request.query);
+
   const {
     query: { filter, value },
   } = request;
@@ -60,11 +61,13 @@ faq.get("/api/faqs", (request, response) => {
     return response.send(
       faqList.filter((item) => item[filter].includes(value))
     );
+
+  return response.send(faqList);
 });
 
 //---------------------------------------------PATCH------------------------------------------------------
 //to update the category, question, or answer for the faq page
-faq.patch(
+app.patch(
   "/api/faqs/:id",
   checkSchema(patchFAQvalidation),
   findFAQIndex,
@@ -87,9 +90,9 @@ faq.patch(
 );
 
 //---------------------------------------------PUT------------------------------------------------------
-faq.put(
+app.put(
   "/api/faqs/:id",
-  checkSchema(FAQvalidation),
+  checkSchema(mainFAQvalidation),
   findFAQIndex,
   (request, response) => {
     const errorResult = validationResult(request);
@@ -110,7 +113,7 @@ faq.put(
 );
 
 //---------------------------------------------POST------------------------------------------------------
-faq.post("/api/faqs", checkSchema(FAQvalidation), (request, response) => {
+app.post("/api/faqs", checkSchema(mainFAQvalidation), (request, response) => {
   const errorResult = validationResult(request);
   console.log(errorResult);
 
@@ -128,10 +131,10 @@ faq.post("/api/faqs", checkSchema(FAQvalidation), (request, response) => {
 });
 
 //---------------------------------------------DELETE------------------------------------------------------
-faq.delete("/api/faqs/:id", findFAQIndex, (request, response) => {
+app.delete("/api/faqs/:id", findFAQIndex, (request, response) => {
   const { faqIndex } = request;
   faqList.splice(faqIndex, 1);
   return response.sendStatus(200);
 });
 
-export default faq;
+export default app;
