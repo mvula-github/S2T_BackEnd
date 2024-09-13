@@ -3,6 +3,8 @@ import { userList } from "./../utils/USERS/usersData.mjs";
 
 const app = Router();
 
+app.use(express.json());
+
 const findUserIndex = (request, response, next) => {
   const {
     body,
@@ -33,8 +35,31 @@ app.post("/api/users", (request, response) => {
 
 //---------------------------------------GET-----------------------------
 //to view all users in the database
-app.get("/api/users", (request, response) => {
+app.get("/api/:users", (request, response) => {
   return response.send(userList);
+});
+
+//to view or find a specific user in database
+app.get("/api/users/:id", findUserIndex, (request, response) => {
+  const { userIndex } = request;
+
+  const findUser = userList[userIndex];
+  if (!findUser) return response.sendStatus(404);
+
+  return response.status(200).send(findUser);
+});
+
+//to find users based in a filter query
+app.get("/api/users", (request, response) => {
+  console.log(request.query); //to view query values in cmd
+
+  //const { filter, value } = request.query;
+
+  //if (!filter && !value) return response.send(userList);
+
+  //const filteredUsers = userList.filter((user) => user[filter].includes(value));
+
+  return response.send(filteredUsers);
 });
 
 export default app;
