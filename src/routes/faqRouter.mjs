@@ -10,6 +10,7 @@ import {
   mainFAQvalidation,
   patchFAQvalidation,
 } from "../utils/FAQ/faqValidation.mjs";
+import { userList } from "../utils/USERS/usersData.mjs";
 
 const app = Router();
 
@@ -32,10 +33,46 @@ const findFAQIndex = (request, response, next) => {
   next();
 };
 
+app.post("/api/auth", (req, res) => {
+  const {
+    body: { fName, password },
+  } = req;
+
+  const findUser = userList.find((user) => user.fName === fName);
+
+  if (!findUser || findUser.password !== password)
+    return res.status(401).send({ msg: "Bad Credentials" });
+
+  req.session.user = findUser;
+  return res.status(200).send(findUser);
+});
+
+app.get("/api/auth/status", (req, res) => {
+  req.sessionStore.get(req.sessionID, (err, session) => {
+    console.log(session);
+  });
+
+  return req.session.user
+    ? res.status(200).send(req.session.user)
+    : res.status(401).send({ msg: "Not Authenticated" });
+});
+
 //---------------------------------------------GET------------------------------------------------------
 //displays all FAQ Q/A
 app.get("/api/faqs", (request, response) => {
-  response.status(200).send(faqList);
+  // console.log(request.headers.cookie);
+  //console.log(request.cookies);
+  console.log(request.session);
+  console.log(request.session.id);
+  request.sessionStore.get(request.session.id, (err, sessionData) => {
+    if (err) {
+    }
+    console.log(sessionData);
+  });
+  if (request.cookies.hello && request.cookies.hello === "world")
+    return response.status(200).send(faqList);
+
+  return response.send({ msg: "Sorry, you need the correct cookie" });
 });
 
 //display only one FAQ Q/A specified by the id
@@ -49,6 +86,7 @@ app.get("/api/faqs/:id", findFAQIndex, (request, response) => {
 });
 
 //query request method (i.e. filter)
+/*
 app.get("/api/faqs", (request, response) => {
   console.log(request.query);
 
@@ -63,7 +101,7 @@ app.get("/api/faqs", (request, response) => {
     );
 
   return response.send(faqList);
-});
+});*/
 
 //---------------------------------------------PATCH------------------------------------------------------
 //to update the category, question, or answer for the faq page

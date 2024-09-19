@@ -24,10 +24,29 @@ const findUserIndex = (request, response, next) => {
 
 //----------------------------------------POST------------------------------------
 //FOR WHEN USERS CREATE A NEW ACCOUNT
-app.post("/api/users", (request, response) => {
-  const { body } = request;
+app.post("/api/auth/signup", (request, response) => {
+  const {
+    body: { password, cPassword, email },
+  } = request;
 
-  const newUser = { id: userList[userList.length - 1].id + 1, ...body };
+  //console.log(`Password: ${password}, cPassword: ${cPassword}`);
+
+  if (password !== cPassword)
+    return response.status(400).send("Passwords do not match");
+
+  const userExists = userList.some((user) => user.email === email);
+
+  //To check if user already exists
+  if (userExists) {
+    return response.status(400).send("Email already exists");
+  }
+
+  //add code to check if email already exits
+
+  const newUser = {
+    id: userList[userList.length - 1].id + 1,
+    ...body,
+  };
   userList.push(newUser);
 
   return response.status(200).send("New User Added Succesfully");
@@ -35,12 +54,13 @@ app.post("/api/users", (request, response) => {
 
 //---------------------------------------GET-----------------------------
 //to view all users in the database
-app.get("/api/:users", (request, response) => {
+app.get("/api/users", (request, response) => {
   return response.send(userList);
 });
 
+//FOR WHEN USERS WANTS TO SIGN IN
 //to view or find a specific user in database
-app.get("/api/users/:id", findUserIndex, (request, response) => {
+app.get("/api/auth/login", findUserIndex, (request, response) => {
   const { userIndex } = request;
 
   const findUser = userList[userIndex];
@@ -49,6 +69,7 @@ app.get("/api/users/:id", findUserIndex, (request, response) => {
   return response.status(200).send(findUser);
 });
 
+//FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
 //to find users based in a filter query
 app.get("/api/users", (request, response) => {
   console.log(request.query); //to view query values in cmd
@@ -61,5 +82,9 @@ app.get("/api/users", (request, response) => {
 
   return response.send(filteredUsers);
 });
+
+//----------------------------------PATCH--------------------------------------
+
+//WHEN USER OR ADMIN WANTS TO UPDATE CERTAIN
 
 export default app;
