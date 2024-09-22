@@ -1,11 +1,3 @@
-import {
-  query,
-  body,
-  validationResult,
-  matchedData,
-  checkSchema,
-} from "express-validator";
-
 export const mainFAQvalidation = {
   //Validation handling for incorrect Category input
   category: {

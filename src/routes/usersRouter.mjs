@@ -1,6 +1,18 @@
 import express, { response, Router } from "express";
-import { userList } from "./../utils/USERS/usersData.mjs";
 import { User } from "../mongoose/schemas/user.mjs";
+import {
+  query,
+  body,
+  validationResult,
+  matchedData,
+  checkSchema,
+} from "express-validator";
+import {
+  addUserValidation,
+  updateUserValidation,
+} from "../utils/validation/usersValidation.mjs";
+import passport from "passport";
+import "../strategies/local-strategy.mjs";
 
 const app = Router();
 
@@ -25,58 +37,63 @@ const findUserIndex = (request, response, next) => {
 
 //----------------------------------------POST------------------------------------
 //FOR WHEN USERS CREATE A NEW ACCOUNT
-app.post("/api/auth/signup", (request, response) => {
-  const {
-    body: { password, cPassword, email },
-  } = request;
+app.post(
+  "/api/auth/signup",
+  checkSchema(addUserValidation),
+  async (request, response) => {
+    //handling the validation results if they are present
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) return response.status(400).send(errors.array());
 
-  if (cPassword !== password)
-    return response.status(400).send("Passwords do not match");
+    const {
+      body: { password, cPassword, email },
+    } = request;
 
-  const userExists = userList.some((user) => user.email === email);
+    //verifying if confirmation password matches password
+    if (cPassword !== password)
+      return response.status(400).send("Passwords do not match");
 
-  //To check if user already exists
-  if (userExists) {
-    return response.status(400).send("Email already exists");
+    //To check if user already exists
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+      return response.status(400).send("Email already exists");
+    }
+
+    //declaring the new users with only valid data
+    const data = matchedData(request);
+    console.log(data);
+
+    const newUser = User(data);
+
+    try {
+      const savedUser = await newUser.save();
+      userList.push(savedUser);
+
+      return response.status(200).send(savedUser);
+    } catch (err) {
+      console.log(err);
+      return response.sendStatus(400);
+    }
   }
-
-  //add new user to database
-  const newUser = {
-    id: userList[userList.length - 1].id + 1,
-    ...body,
-  };
-  userList.push(newUser);
-
-  return response.status(200).send("New User Added Succesfully");
-});
-
-//demo add user to database
-app.post("/api/users", async (request, response) => {
-  const { body } = request;
-
-  const newUser = new User(body);
-  try {
-    const saveUser = await newUser.save();
-    return response.status(201).send(saveUser);
-  } catch (err) {
-    console.log(err);
-    return response.sendStatus(400);
-  }
-});
+);
 
 //USER LOGIN REQUEST
-app.post("/api/auth/login", (request, response) => {
-  const {
-    body: { fName, password },
-  } = request;
+app.post(
+  "/api/auth/login",
+  passport.authenticate("local"),
+  (request, response) => {
+    const {
+      body: { fName, password },
+    } = request;
 
-  const findUser = userList.find((user) => user.fName === fName);
+    const findUser = userList.find((user) => user.fName === fName);
 
-  if (!findUser) return response.status(401).send({ msg: "Bad Credentials" });
+    if (!findUser) return response.status(401).send({ msg: "Bad Credentials" });
 
-  request.session.user = findUser;
-  return response.status(200).send(findUser);
-});
+    request.session.user = findUser;
+    return response.status(200).send(findUser);
+  }
+);
 
 app.get("/api/auth/status", (req, res) => {
   console.log("This is the status endpoint ");

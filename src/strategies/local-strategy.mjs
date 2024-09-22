@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy } from "passport-local";
-import { userList } from "../utils/USERS/usersData.mjs";
+import { User } from "../mongoose/schemas/user.mjs";
 
 passport.serializeUser((user, done) => {
   console.log("Inside Serialze user");
@@ -8,11 +8,11 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
   console.log("Inside Deserialize user");
   console.log(`Deseialize user ID : ${id}`);
   try {
-    const findUser = userList.find((user) => user.id === id);
+    const findUser = await User.findById(id);
     if (!findUser) throw new Error("User does not exist");
     done(null, findUser);
   } catch (err) {
@@ -22,11 +22,9 @@ passport.deserializeUser((id, done) => {
 
 //authenticating or verifying if user exists
 export default passport.use(
-  new Strategy({ usernameField: "email" }, (username, password, done) => {
-    console.log(`username : ${username}`);
-    console.log(`password: ${password}`);
+  new Strategy({ usernameField: "email" }, async (username, password, done) => {
     try {
-      const findUser = userList.find((user) => user.email === username);
+      const findUser = await User.findOne({ username: email });
       if (!findUser) throw new Error("User does not exist");
       if (findUser.password !== password)
         throw new Error("Invalid Credentials");
