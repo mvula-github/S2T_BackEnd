@@ -113,7 +113,7 @@ app.put(
 
       if (!updatedFAQ) return response.status(404).send("FAQ not found");
 
-      response.status(200).send(updatedFAQ);
+      response.status(200).send("FAQ updated successlly");
     } catch (err) {
       return response.status(500).send(`Failed to update FAQ: ${err}`);
     }
@@ -121,10 +121,20 @@ app.put(
 );
 
 //---------------------------------------------DELETE------------------------------------------------------
-app.delete("/api/faqs/:id", (request, response) => {
-  const { faqIndex } = request;
-  faqList.splice(faqIndex, 1);
-  return response.sendStatus(200);
+app.delete("/api/faqs/:id", async (request, response) => {
+  const {
+    params: { id },
+  } = request;
+
+  try {
+    const deletedFAQ = await faq.findByIdAndDelete(id);
+
+    if (!deletedFAQ) return response.status(404).send("FAQ not found");
+
+    response.status(200).send("FAQ deleted successfully");
+  } catch (err) {
+    return response.status(500).send(`Failed to delete FAQ: ${err}`);
+  }
 });
 
 export default app;
