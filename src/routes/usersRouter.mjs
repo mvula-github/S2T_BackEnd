@@ -1,5 +1,6 @@
 import express, { response, Router } from "express";
 import { userList } from "./../utils/USERS/usersData.mjs";
+import { User } from "../mongoose/schemas/user.mjs";
 
 const app = Router();
 
@@ -47,6 +48,20 @@ app.post("/api/auth/signup", (request, response) => {
   userList.push(newUser);
 
   return response.status(200).send("New User Added Succesfully");
+});
+
+//demo add user to database
+app.post("/api/users", async (request, response) => {
+  const { body } = request;
+
+  const newUser = new User(body);
+  try {
+    const saveUser = await newUser.save();
+    return response.status(201).send(saveUser);
+  } catch (err) {
+    console.log(err);
+    return response.sendStatus(400);
+  }
 });
 
 //USER LOGIN REQUEST
