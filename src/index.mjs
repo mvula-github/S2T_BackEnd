@@ -1,11 +1,18 @@
-import express, { json, Router } from "express";
+import express, { json, response, Router } from "express";
 import rootRouter from "./routes/rootRouter.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
+import mongoose from "mongoose";
+import "./strategies/local-strategy.mjs";
 
 //Initialize the express app
 const app = express();
+
+mongoose
+  .connect("mongodb://localhost:27017/share2teach")
+  .then(() => console.log("Connected to Database"))
+  .catch((err) => console.log(`Error: ${err}`));
 
 // Parsing JSON request bodies
 app.use(express.json());
@@ -20,10 +27,25 @@ app.use(
   })
 );
 
+//registering passport
 app.use(passport.initialize());
 app.use(passport.session());
+
 //route which contains all my other routes
 app.use(rootRouter);
+
+app.post("/api/auth", passport.authenticate("local"), (request, response) => {
+  response.sendStatus(200);
+});
+
+app.post("/api/auth/logout", (request, response) => {
+  if (request.user) return response.sendStatus(401);
+
+  request.logout((err) => {
+    if (err) return response.sendStatus(400);
+    response.send(200);
+  });
+});
 
 app.get("/", (request, response) => {
   //recieving the cookie from the server but doing nothing with it

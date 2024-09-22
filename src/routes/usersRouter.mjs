@@ -64,6 +64,7 @@ app.post("/api/auth/login", (request, response) => {
 });
 
 app.get("/api/auth/status", (req, res) => {
+  console.log("This is the status endpoint ");
   req.sessionStore.get(req.sessionID, (err, session) => {
     console.log(session);
   });
@@ -73,9 +74,9 @@ app.get("/api/auth/status", (req, res) => {
     : res.status(401).send({ msg: "Not Authenticated" });
 });
 
-app.post("/api/auth/logout", (request, response) => {
-  return response.status(200).send("User logged out succesfully");
-});
+//app.post("/api/auth/logout", (request, response) => {
+// return response.status(200).send("User logged out succesfully");
+//});
 
 //-----------------------GET-----------------------------
 //to view all users in the database
