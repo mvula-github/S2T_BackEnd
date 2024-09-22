@@ -2,6 +2,7 @@ import express, { json, Router } from "express";
 import rootRouter from "./routes/rootRouter.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import passport from "passport";
 
 //Initialize the express app
 const app = express();
@@ -19,6 +20,8 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
 //route which contains all my other routes
 app.use(rootRouter);
 

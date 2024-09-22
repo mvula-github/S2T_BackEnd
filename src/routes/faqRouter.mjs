@@ -1,4 +1,4 @@
-import express, { response, Router } from "express";
+import express, { Router } from "express";
 import { faqList } from "../utils/FAQ/faqData.mjs";
 import {
   validationResult,
@@ -10,7 +10,6 @@ import {
   mainFAQvalidation,
   patchFAQvalidation,
 } from "../utils/FAQ/faqValidation.mjs";
-import { userList } from "../utils/USERS/usersData.mjs";
 
 const app = Router();
 
@@ -32,30 +31,6 @@ const findFAQIndex = (request, response, next) => {
   request.faqIndex = faqIndex;
   next();
 };
-
-app.post("/api/auth", (req, res) => {
-  const {
-    body: { fName, password },
-  } = req;
-
-  const findUser = userList.find((user) => user.fName === fName);
-
-  if (!findUser || findUser.password !== password)
-    return res.status(401).send({ msg: "Bad Credentials" });
-
-  req.session.user = findUser;
-  return res.status(200).send(findUser);
-});
-
-app.get("/api/auth/status", (req, res) => {
-  req.sessionStore.get(req.sessionID, (err, session) => {
-    console.log(session);
-  });
-
-  return req.session.user
-    ? res.status(200).send(req.session.user)
-    : res.status(401).send({ msg: "Not Authenticated" });
-});
 
 //---------------------------------------------GET------------------------------------------------------
 //displays all FAQ Q/A
