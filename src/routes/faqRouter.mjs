@@ -70,24 +70,27 @@ app.get("/api/faqs/:id", (request, response) => {
 app.patch(
   "/api/faqs/:id",
   checkSchema(patchFAQvalidation),
-  (request, response) => {
+  async (request, response) => {
     const errorResult = validationResult(request);
 
     //handle the validations i.e. doesn't add invalid data to database
     if (!errorResult.isEmpty())
       return response.status(400).send({ error: errorResult.array() });
 
-    const { faqIndex } = request;
-
     //To know if the data is valid or not
+    const {
+      params: { id },
+    } = request;
     const data = matchedData(request);
     try {
+      const updatedFAQ = await faq.findByIdAndUpdate(id, data);
+
+      if (!updatedFAQ) return response.status(404).send("FAQ not found");
+
+      response.status(200).send("FAQ updated successlly");
     } catch (err) {
       return response.status(500).send(`Failed to update FAQ: ${err}`);
     }
-
-    faqList[faqIndex] = { ...faqList[faqIndex], ...data };
-    return response.sendStatus(200);
   }
 );
 
