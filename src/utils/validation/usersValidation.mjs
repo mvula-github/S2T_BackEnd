@@ -1,11 +1,3 @@
-import {
-  query,
-  body,
-  validationResult,
-  matchedData,
-  checkSchema,
-} from "express-validator";
-
 export const addUserValidation = {
   fName: {
     notEmpty: { errorMessage: "First name is required" },
