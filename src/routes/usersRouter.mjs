@@ -18,23 +18,6 @@ const app = Router();
 
 app.use(express.json());
 
-const findUserIndex = (request, response, next) => {
-  const {
-    body,
-    params: { id },
-  } = request;
-
-  const parsedId = parseInt(id);
-  if (isNaN(parsedId))
-    return response.status(400).send("Bad request. Invalid value");
-
-  const userIndex = userList.findIndex((user) => user.id === parsedId);
-  if (userIndex === -1) return response.status(404).send("User does not exist");
-
-  request.userIndex = userIndex;
-  next();
-};
-
 //----------------------------------------POST------------------------------------
 //FOR WHEN USERS CREATE A NEW ACCOUNT
 app.post(
@@ -67,7 +50,6 @@ app.post(
 
     try {
       const savedUser = await newUser.save();
-      userList.push(savedUser);
 
       return response.status(200).send(savedUser);
     } catch (err) {
@@ -82,7 +64,7 @@ app.post(
   "/api/auth/login",
   passport.authenticate("local"),
   (request, response) => {
-    const {
+    /*const {
       body: { fName, password },
     } = request;
 
@@ -91,7 +73,8 @@ app.post(
     if (!findUser) return response.status(401).send({ msg: "Bad Credentials" });
 
     request.session.user = findUser;
-    return response.status(200).send(findUser);
+    return response.status(200).send(findUser);*/
+    response.status(200).send("Loggin Successful");
   }
 );
 
@@ -105,10 +88,6 @@ app.get("/api/auth/status", (req, res) => {
     ? res.status(200).send(req.session.user)
     : res.status(401).send({ msg: "Not Authenticated" });
 });
-
-//app.post("/api/auth/logout", (request, response) => {
-// return response.status(200).send("User logged out succesfully");
-//});
 
 //-----------------------GET-----------------------------
 //to view all users in the database

@@ -58,6 +58,29 @@ export const addUserValidation = {
       errorMessage: "Password must contain at least one special character",
     },
   },
+  cPassword: {
+    notEmpty: { errorMessage: "Password is required" },
+    isLength: {
+      options: { min: 8 },
+      errorMessage: "Password must be at least 8 characters long",
+    },
+    matches: {
+      options: /\d/, // Check for at least one number
+      errorMessage: "Password must contain at least one number",
+    },
+    matches: {
+      options: /[A-Z]/, // Check for at least one uppercase letter
+      errorMessage: "Password must contain at least one uppercase letter",
+    },
+    matches: {
+      options: /[a-z]/, // Check for at least one lowercase letter
+      errorMessage: "Password must contain at least one lowercase letter",
+    },
+    matches: {
+      options: /[\W_]/, // Check for at least one special character or underscore
+      errorMessage: "Password must contain at least one special character",
+    },
+  },
   affiliation: {
     optional: true,
     trim: true,

@@ -23,7 +23,7 @@ app.use(
     secret: "secretPassword",
     saveUninitialized: false,
     resave: false,
-    cookie: { maxAge: 60000 * 60 },
+    cookie: { maxAge: 60000 * 60 }, //set cookie to 1 hour
   })
 );
 
@@ -39,7 +39,7 @@ app.post("/api/auth", passport.authenticate("local"), (request, response) => {
 });
 
 app.post("/api/auth/logout", (request, response) => {
-  if (request.user) return response.sendStatus(401);
+  if (!request.user) return response.sendStatus(401);
 
   request.logout((err) => {
     if (err) return response.sendStatus(400);

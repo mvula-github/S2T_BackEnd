@@ -41,7 +41,7 @@ app.post(
 
 //---------------------------------------------GET------------------------------------------------------
 //displays all FAQ Q/A
-app.get("/api/faqs", (request, response) => {
+/*app.get("/api/faqs", (request, response) => {
   console.log(request.session);
   console.log(request.session.id);
   request.sessionStore.get(request.session.id, (err, sessionData) => {
@@ -53,16 +53,32 @@ app.get("/api/faqs", (request, response) => {
     return response.status(200).send(faqList);
 
   return response.send({ msg: "Sorry, you need the correct cookie" });
+});*/
+
+app.get("/api/faqs", async (request, response) => {
+  try {
+    const allFAQs = await faq.find();
+    response.status(200).send(allFAQs);
+  } catch (err) {
+    return response.status(500).send("Failed to retrieve all FAQs");
+  }
 });
 
 //display only one FAQ Q/A specified by the id
-app.get("/api/faqs/:id", (request, response) => {
-  const { faqIndex } = request;
+app.get("/api/faqs/:id", async (request, response) => {
+  const {
+    params: { id },
+  } = request;
 
-  const findFAQ = faqList[faqIndex];
-  if (!findFAQ) return response.sendStatus(404);
+  try {
+    const theFaq = await faq.findById(id);
+    console.log(theFaq);
+    if (!theFaq) return response.status(404).send("FAQ not found");
 
-  return response.status(200).send(findFAQ);
+    response.status(200).send(theFaq);
+  } catch (err) {
+    response.status(500).send(`Failed to retrieve the FAQ: ${err}`);
+  }
 });
 
 //---------------------------------------------PATCH------------------------------------------------------
