@@ -38,15 +38,6 @@ app.post("/api/auth", passport.authenticate("local"), (request, response) => {
   response.sendStatus(200);
 });
 
-app.post("/api/auth/logout", (request, response) => {
-  if (!request.user) return response.sendStatus(401);
-
-  request.logout((err) => {
-    if (err) return response.sendStatus(400);
-    response.send(200);
-  });
-});
-
 app.get("/", (request, response) => {
   //recieving the cookie from the server but doing nothing with it
   console.log(request.session);

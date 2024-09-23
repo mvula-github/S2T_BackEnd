@@ -97,8 +97,21 @@ app.get("/api/auth/status", (request, response) => {
 
 //-----------------------GET-----------------------------
 //to view all users in the database
-app.get("/api/users", (request, response) => {
-  return response.send(userList);
+app.get("/api/users", async (request, response) => {
+  if (request.session.user) {
+    try {
+      const allUsers = await User.find();
+
+      //display all users
+      response.status(200).send(allUsers);
+    } catch (err) {
+      return response
+        .status(500)
+        .send(`Failed to retrieve all users, Error:${err}`);
+    }
+  } else {
+    response.status(401).send("User not logged in");
+  }
 });
 
 //FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
