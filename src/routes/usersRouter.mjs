@@ -19,6 +19,7 @@ const app = Router();
 app.use(express.json());
 
 //----------------------------------------POST------------------------------------
+
 //FOR WHEN USERS CREATE A NEW ACCOUNT
 app.post(
   "/api/auth/signup",
@@ -46,6 +47,7 @@ app.post(
     const data = matchedData(request);
     const newUser = User(data);
 
+    //Saving user to the database
     try {
       const savedUser = await newUser.save();
 
@@ -76,15 +78,17 @@ app.post(
   }
 );
 
+//USER LOGOUT REQUEST
 app.post("/api/auth/logout", (request, response) => {
   if (!request.user) return response.sendStatus(401);
 
   request.logout((err) => {
     if (err) return response.sendStatus(400);
-    response.send(200);
+    response.status(200).send("Logged Out Succesfully");
   });
 });
 
+//TO CHECK IF USER IS LOG IN STATUS
 app.get("/api/auth/status", (request, response) => {
   console.log("This is the status endpoint ");
   console.log(request.user);
@@ -95,16 +99,18 @@ app.get("/api/auth/status", (request, response) => {
     : response.status(401).send(" User Not Authenticated");
 });
 
-//-----------------------GET-----------------------------
+//----------------------------------------GET--------------------------------------------
 //to view all users in the database
 app.get("/api/users", async (request, response) => {
   if (request.session.user) {
+    //verify if user is logged in
     try {
       const allUsers = await User.find();
 
       //display all users
       response.status(200).send(allUsers);
     } catch (err) {
+      //error handling
       return response
         .status(500)
         .send(`Failed to retrieve all users, Error:${err}`);
@@ -127,6 +133,8 @@ app.get("/api/users", (request, response) => {
 
   return response.send(filteredUsers);
 });
+
+app.get("/api/users/:id", (request, response) => {});
 
 //----------------------------------PATCH--------------------------------------
 
