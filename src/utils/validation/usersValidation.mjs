@@ -98,12 +98,8 @@ export const addUserValidation = {
     },
   },
   role: {
-    optional: { options: { nullable: true } }, // Role is optional but has a default
-    isIn: {
-      options: [["educator", "moderator", "admin"]], // Allowed values
-      errorMessage: "Role must be either 'educator', 'moderator', or 'admin'",
-    },
-    default: "educator", // Set default value as 'educator'
+    optional: true,
+    // default: "educator",
   },
 };
 
@@ -178,11 +174,7 @@ export const updateUserValidation = {
     },
   },
   role: {
-    optional: { options: { nullable: true } }, // Role is optional but has a default
-    isIn: {
-      options: [["educator", "moderator", "admin"]], // Allowed values
-      errorMessage: "Role must be either 'educator', 'moderator', or 'admin'",
-    },
-    default: "educator", // Set default value as 'educator'
+    optional: true,
+    //default: "educator",
   },
 };

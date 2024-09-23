@@ -23,12 +23,9 @@ passport.deserializeUser(async (id, done) => {
 //authenticating or verifying if user exists
 export default passport.use(
   new Strategy({ usernameField: "email" }, async (email, password, done) => {
-    console.log(email);
-    console.log(password);
     try {
       const findUser = await User.findOne({ email });
-      console.log(findUser);
-      if (!findUser) throw new Error("User does not exist");
+      if (!findUser) throw new Error("username or password is invalid");
       if (findUser.password !== password)
         throw new Error("Invalid Credentials");
 

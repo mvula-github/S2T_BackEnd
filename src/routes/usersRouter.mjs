@@ -1,4 +1,4 @@
-import express, { response, Router } from "express";
+import express, { request, response, Router } from "express";
 import { User } from "../mongoose/schemas/user.mjs";
 import {
   query,
@@ -44,14 +44,12 @@ app.post(
 
     //declaring the new users with only valid data
     const data = matchedData(request);
-    console.log(data);
-
     const newUser = User(data);
 
     try {
       const savedUser = await newUser.save();
 
-      return response.status(200).send(savedUser);
+      return response.status(201).send(savedUser);
     } catch (err) {
       console.log(err);
       return response.sendStatus(400);
@@ -63,30 +61,38 @@ app.post(
 app.post(
   "/api/auth/login",
   passport.authenticate("local"),
-  (request, response) => {
-    /*const {
-      body: { fName, password },
+  async (request, response) => {
+    const {
+      body: { email },
     } = request;
+    try {
+      const findUser = await User.findOne({ email });
 
-    const findUser = userList.find((user) => user.fName === fName);
-
-    if (!findUser) return response.status(401).send({ msg: "Bad Credentials" });
-
-    request.session.user = findUser;
-    return response.status(200).send(findUser);*/
-    response.status(200).send("Loggin Successful");
+      request.session.user = { id: findUser.id, username: findUser.email };
+      response.status(200).send("Loggin Successful");
+    } catch (err) {
+      response.status(500).send(`Error: ${err}`);
+    }
   }
 );
 
-app.get("/api/auth/status", (req, res) => {
-  console.log("This is the status endpoint ");
-  req.sessionStore.get(req.sessionID, (err, session) => {
-    console.log(session);
-  });
+app.post("/api/auth/logout", (request, response) => {
+  if (!request.user) return response.sendStatus(401);
 
-  return req.session.user
-    ? res.status(200).send(req.session.user)
-    : res.status(401).send({ msg: "Not Authenticated" });
+  request.logout((err) => {
+    if (err) return response.sendStatus(400);
+    response.send(200);
+  });
+});
+
+app.get("/api/auth/status", (request, response) => {
+  console.log("This is the status endpoint ");
+  console.log(request.user);
+  console.log(request.session);
+
+  return request.user
+    ? response.status(200).send(request.user)
+    : response.status(401).send(" User Not Authenticated");
 });
 
 //-----------------------GET-----------------------------
