@@ -23,7 +23,7 @@ app.use(
     secret: "secretPassword",
     saveUninitialized: false,
     resave: false,
-    cookie: { maxAge: 60000 * 60 }, //set cookie to 1 hour
+    cookie: { maxAge: 60000 * 60 * 5 }, //set cookie to 2 hour
   })
 );
 
@@ -39,11 +39,6 @@ app.post("/api/auth", passport.authenticate("local"), (request, response) => {
 });
 
 app.get("/", (request, response) => {
-  //recieving the cookie from the server but doing nothing with it
-  console.log(request.session);
-  console.log(request.session.id);
-  request.session.visited = true;
-  response.cookie("hello", "world", { maxAge: 60000 * 60 });
   response.status(403).send({ msg: "Hello World" });
 });
 

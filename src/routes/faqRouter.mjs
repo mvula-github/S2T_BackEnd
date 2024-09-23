@@ -102,7 +102,7 @@ app.patch(
 
       if (!updatedFAQ) return response.status(404).send("FAQ not found");
 
-      response.status(200).send("FAQ updated successlly");
+      response.status(201).send("FAQ updated successlly");
     } catch (err) {
       return response.status(500).send(`Failed to update FAQ: ${err}`);
     }
@@ -123,7 +123,8 @@ app.put(
     const {
       params: { id },
     } = request;
-    //To know if the data is valid or not
+
+    //To know if the stored data is valid or not
     const data = matchedData(request);
 
     try {
@@ -131,7 +132,7 @@ app.put(
 
       if (!updatedFAQ) return response.status(404).send("FAQ not found");
 
-      response.status(200).send("FAQ updated successlly");
+      response.status(201).send("FAQ updated successlly");
     } catch (err) {
       return response.status(500).send(`Failed to update FAQ: ${err}`);
     }

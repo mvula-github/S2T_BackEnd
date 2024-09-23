@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
   cPassword: { type: String, required: true, unique: true },
   affiliation: { type: String, required: false, unique: false, default: null },
   credentials: { type: String, required: false, unique: false, default: null },
-  role: { type: String, required: true, unique: false, default: "eductor" },
+  role: { type: String, required: false, unique: false, default: "educator" },
 });
 
 export const User = mongoose.model("User", UserSchema);
