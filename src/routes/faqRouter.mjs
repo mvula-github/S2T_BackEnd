@@ -72,7 +72,6 @@ app.get("/api/faqs/:id", async (request, response) => {
 
   try {
     const theFaq = await faq.findById(id);
-    console.log(theFaq);
     if (!theFaq) return response.status(404).send("FAQ not found");
 
     response.status(200).send(theFaq);

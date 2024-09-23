@@ -134,7 +134,25 @@ app.get("/api/users", (request, response) => {
   return response.send(filteredUsers);
 });
 
-app.get("/api/users/:id", (request, response) => {});
+app.get("/api/users/:id", async (request, response) => {
+  if (request.session.user) {
+    //verify user
+    const {
+      params: { id },
+    } = request;
+
+    try {
+      const theUser = await User.findById(id);
+      if (!theUser) return response.status(404).send("User not found");
+
+      response.status(200).send(theUser);
+    } catch (err) {
+      response.status().send(`Failed to retrieved the user: ${err}`);
+    }
+  } else {
+    response.status(401).send("User not logged in");
+  }
+});
 
 //----------------------------------PATCH--------------------------------------
 
