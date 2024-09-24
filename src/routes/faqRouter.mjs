@@ -18,23 +18,27 @@ app.post(
   "/api/faqs",
   checkSchema(mainFAQvalidation),
   async (request, response) => {
-    const errorResult = validationResult(request);
-    console.log(errorResult);
+    if (request.session.user) {
+      const errorResult = validationResult(request);
+      console.log(errorResult);
 
-    //handle the validations i.e. doesn't add invalid data to database
-    if (!errorResult.isEmpty())
-      return response.status(400).send({ error: errorResult.array() });
+      //handle the validations i.e. doesn't add invalid data to database
+      if (!errorResult.isEmpty())
+        return response.status(400).send({ error: errorResult.array() });
 
-    //To know if the data is valid or not
-    const data = matchedData(request);
+      //To know if the data is valid or not
+      const data = matchedData(request);
 
-    //adding the new FAQ category, question and answer
-    try {
-      const newFAQ = new faq(data);
-      await newFAQ.save();
-      return response.status(201).send("Added Succesfully");
-    } catch (err) {
-      return response.sendStatus(400);
+      //adding the new FAQ category, question and answer
+      try {
+        const newFAQ = new faq(data);
+        await newFAQ.save();
+        return response.status(201).send("Added Succesfully");
+      } catch (err) {
+        return response.sendStatus(400);
+      }
+    } else {
+      response.status(401).send("User not logged in");
     }
   }
 );
@@ -86,25 +90,29 @@ app.patch(
   "/api/faqs/:id",
   checkSchema(patchFAQvalidation),
   async (request, response) => {
-    const errorResult = validationResult(request);
+    if (request.session.user) {
+      const errorResult = validationResult(request);
 
-    //handle the validations i.e. doesn't add invalid data to database
-    if (!errorResult.isEmpty())
-      return response.status(400).send({ error: errorResult.array() });
+      //handle the validations i.e. doesn't add invalid data to database
+      if (!errorResult.isEmpty())
+        return response.status(400).send({ error: errorResult.array() });
 
-    //To know if the data is valid or not
-    const {
-      params: { id },
-    } = request;
-    const data = matchedData(request);
-    try {
-      const updatedFAQ = await faq.findByIdAndUpdate(id, data);
+      //To know if the data is valid or not
+      const {
+        params: { id },
+      } = request;
+      const data = matchedData(request);
+      try {
+        const updatedFAQ = await faq.findByIdAndUpdate(id, data);
 
-      if (!updatedFAQ) return response.status(404).send("FAQ not found");
+        if (!updatedFAQ) return response.status(404).send("FAQ not found");
 
-      response.status(201).send("FAQ updated successlly");
-    } catch (err) {
-      return response.status(500).send(`Failed to update FAQ: ${err}`);
+        response.status(201).send("FAQ updated successlly");
+      } catch (err) {
+        return response.status(500).send(`Failed to update FAQ: ${err}`);
+      }
+    } else {
+      response.status(401).send("User not logged in");
     }
   }
 );
@@ -114,45 +122,53 @@ app.put(
   "/api/faqs/:id",
   checkSchema(mainFAQvalidation),
   async (request, response) => {
-    const errorResult = validationResult(request);
+    if (request.session.user) {
+      const errorResult = validationResult(request);
 
-    //handle the validations i.e. doesn't add invalid data to database
-    if (!errorResult.isEmpty())
-      return response.status(400).send({ error: errorResult.array() });
+      //handle the validations i.e. doesn't add invalid data to database
+      if (!errorResult.isEmpty())
+        return response.status(400).send({ error: errorResult.array() });
 
-    const {
-      params: { id },
-    } = request;
+      const {
+        params: { id },
+      } = request;
 
-    //To know if the stored data is valid or not
-    const data = matchedData(request);
+      //To know if the stored data is valid or not
+      const data = matchedData(request);
 
-    try {
-      const updatedFAQ = await faq.findByIdAndUpdate(id, data);
+      try {
+        const updatedFAQ = await faq.findByIdAndUpdate(id, data);
 
-      if (!updatedFAQ) return response.status(404).send("FAQ not found");
+        if (!updatedFAQ) return response.status(404).send("FAQ not found");
 
-      response.status(201).send("FAQ updated successlly");
-    } catch (err) {
-      return response.status(500).send(`Failed to update FAQ: ${err}`);
+        response.status(201).send("FAQ updated successlly");
+      } catch (err) {
+        return response.status(500).send(`Failed to update FAQ: ${err}`);
+      }
+    } else {
+      response.status(401).send("User not logged in");
     }
   }
 );
 
 //---------------------------------------------DELETE------------------------------------------------------
 app.delete("/api/faqs/:id", async (request, response) => {
-  const {
-    params: { id },
-  } = request;
+  if (request.session.user) {
+    const {
+      params: { id },
+    } = request;
 
-  try {
-    const deletedFAQ = await faq.findByIdAndDelete(id);
+    try {
+      const deletedFAQ = await faq.findByIdAndDelete(id);
 
-    if (!deletedFAQ) return response.status(404).send("FAQ not found");
+      if (!deletedFAQ) return response.status(404).send("FAQ not found");
 
-    response.status(200).send("FAQ deleted successfully");
-  } catch (err) {
-    return response.status(500).send(`Failed to delete FAQ: ${err}`);
+      response.status(200).send("FAQ deleted successfully");
+    } catch (err) {
+      return response.status(500).send(`Failed to delete FAQ: ${err}`);
+    }
+  } else {
+    response.status(401).send("User not logged in");
   }
 });
 
