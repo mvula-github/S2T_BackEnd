@@ -4,7 +4,7 @@ import Guide from "../../mongoose/schemas/oer/oerGuide.mjs";
 const router = Router();
 
 // Get all guides
-router.get("/", async (req, res) => {
+router.get("/api/guides", async (req, res) => {
   try {
     const guides = await Guide.find();
     res.status(200).json(guides);
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 });
 
 // Create a new guide
-router.post("/", async (req, res) => {
+router.post("/api/guides", async (req, res) => {
   const { title, description, link } = req.body;
 
   const newGuide = new Guide({ title, description, link });

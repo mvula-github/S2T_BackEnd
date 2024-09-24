@@ -4,7 +4,7 @@ import Author from "../../mongoose/schemas/oer/oerAuthors.mjs";
 const router = Router();
 
 // Get all authors
-router.get("/", async (req, res) => {
+router.get("/api/authors", async (req, res) => {
   try {
     const authors = await Author.find();
     res.status(200).json(authors);
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 });
 
 // Create a new author
-router.post("/", async (req, res) => {
+router.post("/api/authors", async (req, res) => {
   const { name, bioLink } = req.body;
 
   const newAuthor = new Author({ name, bioLink });

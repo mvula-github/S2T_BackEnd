@@ -8,7 +8,7 @@ const router = Router();
 
 // Create a new tutorial
 router.post(
-  "/",
+  "/api/tutorials",
   [
     body("title").isString().notEmpty(), // Validation for title
     body("content").isString().notEmpty(), // Validation for content

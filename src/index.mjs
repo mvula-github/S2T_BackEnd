@@ -1,8 +1,4 @@
 import express, { json, response, Router } from "express";
-import {
-  sessionMiddleware,
-  cookieMiddleware,
-} from "./utils/middleware/sessionMiddleware.mjs";
 import rootRouter from "./routes/rootRouter.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
