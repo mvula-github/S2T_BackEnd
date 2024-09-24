@@ -1,5 +1,8 @@
 import express, { json, response, Router } from "express";
-import { sessionMiddleware, cookieMiddleware } from './middleware/sessionMiddleware.mjs';
+import {
+  sessionMiddleware,
+  cookieMiddleware,
+} from "./utils/middleware/sessionMiddleware.mjs";
 import rootRouter from "./routes/rootRouter.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
@@ -8,28 +11,26 @@ import mongoose from "mongoose";
 import "./strategies/local-strategy.mjs";
 
 // Import OER routes
-import tutorialRoutes from './routes/tutorialRoutes.mjs';
-import guideRoutes from './routes/guideRoutes.mjs';
-import authorRoutes from './routes/authorRoutes.mjs';
+import tutorialRoutes from "./routes/tutorialRoutes.mjs";
+import guideRoutes from "./routes/guideRoutes.mjs";
+import authorRoutes from "./routes/authorRoutes.mjs";
 
 // Initialize the express app
 const app = express();
 
 //callling db functions
-const { connectToDb, getDb} = require('./db')
+const { connectToDb, getDb } = require("./db");
 
 //db connection
-let db
+let db;
 connectToDb((err) => {
-  if(!err) {
+  if (!err) {
     app.listen(PORT, () => {
       console.log(`Running on Port ${PORT}`);
-    })
-    db = getDb()
+    });
+    db = getDb();
   }
-
-})
-
+});
 
 mongoose
   .connect("mongodb://localhost:34007/share2teach")
@@ -57,9 +58,9 @@ app.use(passport.session());
 app.use(rootRouter);
 
 // Use OER routes for Tutorials, Guides, and Authors
-app.use('/tutorials', tutorialRoutes);
-app.use('/guides', guideRoutes);
-app.use('/authors', authorRoutes);
+app.use("/tutorials", tutorialRoutes);
+app.use("/guides", guideRoutes);
+app.use("/authors", authorRoutes);
 
 // Authentication route
 app.post("/api/auth", passport.authenticate("local"), (request, response) => {
