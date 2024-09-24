@@ -26,7 +26,8 @@ app.post(
   async (request, response) => {
     //handling the validation results if they are present
     const errors = validationResult(request);
-    if (!errors.isEmpty()) return response.status(400).send(errors.array());
+    if (!errors.isEmpty())
+      return response.status(400).send(errors.array().map((err) => err.msg));
 
     const {
       body: { password, cPassword, email },
@@ -89,7 +90,7 @@ app.post(
 
 //USER LOGOUT REQUEST
 app.post("/api/auth/logout", (request, response) => {
-  if (!request.user) return response.sendStatus(401);
+  if (!request.user) return response.status(401).send("User did not log in");
 
   request.logout((err) => {
     if (err) return response.sendStatus(400);

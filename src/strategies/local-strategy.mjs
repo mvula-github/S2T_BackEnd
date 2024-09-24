@@ -17,7 +17,7 @@ passport.deserializeUser(async (id, done) => {
     if (!findUser) throw new Error("User does not exist");
     done(null, findUser);
   } catch (err) {
-    done(err, null);
+    done(`${err}`, null);
   }
 });
 
@@ -26,13 +26,13 @@ export default passport.use(
   new Strategy({ usernameField: "email" }, async (email, password, done) => {
     try {
       const findUser = await User.findOne({ email });
-      if (!findUser) throw new Error("username or password is invalid");
+      if (!findUser) throw new Error(`username or password is invalid`);
       if (findUser.password !== password)
         throw new Error("Invalid Credentials");
 
       done(null, findUser);
     } catch (err) {
-      done(err, null);
+      done(`${err}`, null);
     }
   })
 );

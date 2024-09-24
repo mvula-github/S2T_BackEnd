@@ -11,14 +11,10 @@ import {
   UnauthorizedError,
   ForbiddenError,
 } from "../utils/classes/errors.mjs";
-import errorHandler from "../utils/middleware/middleware.mjs";
 
 const app = Router();
 
 app.use(express.json());
-
-// Use the centralized error handling middleware
-app.use(errorHandler);
 
 //----------------------------------------GET--------------------------------------------
 //to view all users in the database

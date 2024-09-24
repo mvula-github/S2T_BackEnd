@@ -10,43 +10,43 @@ class AppError extends Error {
 
 class NotFoundError extends AppError {
   constructor(message = "Resource not found") {
-    super(message, 404);
+    super(`${message}`, 404);
   }
 }
 
 class ValidationError extends AppError {
   constructor(message = "Bad Request") {
-    super(message, 400);
+    super(`${message}`, 400);
   }
 }
 
 class UnauthorizedError extends AppError {
   constructor(message = "Unauthorized access") {
-    super(message, 401);
+    super(`${message}`, 401);
   }
 }
 
 class ForbiddenError extends AppError {
   constructor(message = "Forbidden access") {
-    super(message, 403);
+    super(`${message}`, 403);
   }
 }
 
 class ServerError extends AppError {
   constructor(message = "Internal server error") {
-    super(message, 500);
+    super(`${message}`, 500);
   }
 }
 
 class GatewayError extends AppError {
   constructor(message = "Bad Gateway") {
-    super(message, 502);
+    super(`${message}`, 502);
   }
 }
 
 class ServiceError extends AppError {
   constructor(message = "Service Unavailable") {
-    super(message, 503);
+    super(`${message}`, 503);
   }
 }
 

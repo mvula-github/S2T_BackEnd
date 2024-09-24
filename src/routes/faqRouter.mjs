@@ -44,20 +44,6 @@ app.post(
 );
 
 //---------------------------------------------GET------------------------------------------------------
-//displays all FAQ Q/A
-/*app.get("/api/faqs", (request, response) => {
-  console.log(request.session);
-  console.log(request.session.id);
-  request.sessionStore.get(request.session.id, (err, sessionData) => {
-    if (err) {
-    }
-    console.log(sessionData);
-  });
-  if (request.cookies.hello && request.cookies.hello === "world")
-    return response.status(200).send(faqList);
-
-  return response.send({ msg: "Sorry, you need the correct cookie" });
-});*/
 
 app.get("/api/faqs", async (request, response) => {
   try {

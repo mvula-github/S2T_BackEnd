@@ -1,13 +1,15 @@
 // errorHandler.js
-const errorHandler = (err, request, response, next) => {
+const errorHandler = async (err, request, response, next) => {
   console.error(err.stack);
 
   if (err.isOperational) {
-    return response.status(err.statusCode).json({ error: err.message });
+    return response.status(err.statusCode).send({ error: err.message });
   }
 
   // For unhandled errors, return a generic message
-  response.status(500).json({ error: "An unexpected error occurred!" });
+  return response.status(500).send({ error: "An unexpected error occurred!" });
+
+  next();
 };
 
 export default errorHandler;
