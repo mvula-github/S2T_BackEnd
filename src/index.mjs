@@ -15,6 +15,22 @@ import authorRoutes from './routes/authorRoutes.mjs';
 // Initialize the express app
 const app = express();
 
+//callling db functions
+const { connectToDb, getDb} = require('./db')
+
+//db connection
+let db
+connectToDb((err) => {
+  if(!err) {
+    app.listen(PORT, () => {
+      console.log(`Running on Port ${PORT}`);
+    })
+    db = getDb()
+  }
+
+})
+
+
 mongoose
   .connect("mongodb://localhost:34007/share2teach")
   .then(() => console.log("Connected to Database"))
