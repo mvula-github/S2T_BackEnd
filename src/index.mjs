@@ -30,7 +30,7 @@ connectToDb((err) => {
 */
 
 mongoose
-  .connect("mongodb://localhost:34007/share2teach")
+  .connect("mongodb://localhost:27017/share2teach")
   .then(() => console.log("Connected to Database"))
   .catch((err) => console.log(`Error: ${err}`));
 
