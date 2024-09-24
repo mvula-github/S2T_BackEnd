@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express, { response, Router } from "express";
 import { User } from "../mongoose/schemas/user.mjs";
 import { validationResult, matchedData, checkSchema } from "express-validator";
 import { addUserValidation } from "../utils/validation/usersValidation.mjs";
@@ -8,6 +8,16 @@ import "../strategies/local-strategy.mjs";
 const app = Router();
 
 app.use(express.json());
+
+//To Display to signup page
+app.get("/api/auth/signup", (request, response) => {
+  response.render("SignUp Page");
+});
+
+//To display the Log in page
+app.get("api/auth/login", (request, response) => {
+  response.render("Log In");
+});
 
 //FOR WHEN USERS CREATE A NEW ACCOUNT
 app.post(

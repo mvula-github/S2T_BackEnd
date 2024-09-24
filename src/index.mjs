@@ -23,7 +23,7 @@ app.use(
     secret: "secretPassword",
     saveUninitialized: false,
     resave: false,
-    cookie: { maxAge: 60000 * 60 * 5 }, //set cookie to 2 hour
+    cookie: { maxAge: 1000 * 60 * 60 * 2 }, //set cookie to 2 hour
   })
 );
 
@@ -33,10 +33,6 @@ app.use(passport.session());
 
 //route which contains all my other routes
 app.use(rootRouter);
-
-app.post("/api/auth", passport.authenticate("local"), (request, response) => {
-  response.sendStatus(200);
-});
 
 app.get("/", (request, response) => {
   response.status(403).send({ msg: "Hello World" });
