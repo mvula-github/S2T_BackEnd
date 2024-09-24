@@ -1,19 +1,18 @@
-const {MongoClient} = require ('mongodb')
+const { MongoClient } = require("mongodb");
 
-let dbConnection
+let dbConnection;
 
 module.export = {
-    connectToDb: (cb) => {
-        MongoClient.connect('mongodb://localhost:34007/share2teach')
-            .then((client) => {
-                dbConnection = client.db()
-                    return cb()
-                
-            })
-            .catch(err => {
-                console.log(err)
-                return cb(err)
-            })
-    },
-    getDb: () => dbConnection
-}
+  connectToDb: (cb) => {
+    MongoClient.connect("mongodb://localhost:34007/share2teach")
+      .then((client) => {
+        dbConnection = client.db();
+        return cb();
+      })
+      .catch((err) => {
+        console.log(err);
+        return cb(err);
+      });
+  },
+  getDb: () => dbConnection,
+};

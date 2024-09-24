@@ -1,9 +1,10 @@
 // tutorialRoutes.mjs
-import express from "express";
+import express, { Router } from "express";
 import multer from "multer";
 import { body, validationResult } from "express-validator";
 import Tutorial from "../../mongoose/schemas/oer/oerTutorial.mjs"; // Adjust the path as necessary
-const router = express.Router();
+
+const router = Router();
 
 // Create a new tutorial
 router.post(

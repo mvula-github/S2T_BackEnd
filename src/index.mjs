@@ -10,16 +10,11 @@ import passport from "passport";
 import mongoose from "mongoose";
 import "./strategies/local-strategy.mjs";
 
-// Import OER routes
-import tutorialRoutes from "./routes/tutorialRoutes.mjs";
-import guideRoutes from "./routes/guideRoutes.mjs";
-import authorRoutes from "./routes/authorRoutes.mjs";
-
 // Initialize the express app
 const app = express();
 
 //callling db functions
-const { connectToDb, getDb } = require("./db");
+/*const { connectToDb, getDb } = require("./db");
 
 //db connection
 let db;
@@ -31,6 +26,8 @@ connectToDb((err) => {
     db = getDb();
   }
 });
+
+*/
 
 mongoose
   .connect("mongodb://localhost:34007/share2teach")
@@ -56,11 +53,6 @@ app.use(passport.session());
 
 // Root route which contains other routes
 app.use(rootRouter);
-
-// Use OER routes for Tutorials, Guides, and Authors
-app.use("/tutorials", tutorialRoutes);
-app.use("/guides", guideRoutes);
-app.use("/authors", authorRoutes);
 
 // Authentication route
 app.post("/api/auth", passport.authenticate("local"), (request, response) => {

@@ -1,7 +1,7 @@
-import express from "express";
-import Author from '"../../mongoose/schemas/oer/oerAuthors';
+import express, { Router } from "express";
+import Author from "../../mongoose/schemas/oer/oerAuthors.mjs";
 
-const router = express.Router();
+const router = Router();
 
 // Get all authors
 router.get("/", async (req, res) => {
