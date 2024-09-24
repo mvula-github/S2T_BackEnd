@@ -1,5 +1,6 @@
 // tutorialRoutes.mjs
 import express from 'express';
+import multer from 'multer';
 import { body, validationResult } from 'express-validator';
 import Tutorial from '../mongoose/schemas/oer/Tutorial.mjs'; // Adjust the path as necessary
 
