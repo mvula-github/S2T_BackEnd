@@ -39,7 +39,7 @@ app.use(
     secret: "secretPassword",
     saveUninitialized: false,
     resave: false,
-    cookie: { maxAge: 60000 * 60 * 5 }, // Set cookie to 5 hours
+    cookie: { maxAge: 1000 * 60 * 60 * 2 }, //set cookie to 2 hour
   })
 );
 
@@ -49,11 +49,6 @@ app.use(passport.session());
 
 // Root route which contains other routes
 app.use(rootRouter);
-
-// Authentication route
-app.post("/api/auth", passport.authenticate("local"), (request, response) => {
-  response.sendStatus(200);
-});
 
 // Simple route for testing
 app.get("/", (request, response) => {
