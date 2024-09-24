@@ -17,13 +17,15 @@ mongoose
 // Parsing JSON request bodies
 app.use(express.json());
 
+app.set("view engine", "ejs");
+
 app.use(cookieParser());
 app.use(
   session({
     secret: "secretPassword",
     saveUninitialized: false,
     resave: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 2 }, //set cookie to 2 hour
+    cookie: { maxAge: 1000 * 60 * 60 * 2, secure: true, httpOnly: true }, //set cookie to 2 hour
   })
 );
 
@@ -35,7 +37,7 @@ app.use(passport.session());
 app.use(rootRouter);
 
 app.get("/", (request, response) => {
-  response.status(403).send({ msg: "Hello World" });
+  response.status(403).send({ msg: "Hello World" }); //this should render the landing page
 });
 
 //starting the express server

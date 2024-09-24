@@ -4,10 +4,18 @@ import { validationResult, matchedData, checkSchema } from "express-validator";
 import { addUserValidation } from "../utils/validation/usersValidation.mjs";
 import passport from "passport";
 import "../strategies/local-strategy.mjs";
+import jwt from "jsonwebtoken";
 
 const app = Router();
 
 app.use(express.json());
+
+const maxDuration = 2 * 24 * 60 * 60;
+const createToken = (id) => {
+  return jwt.sign({ id }, "secret signature", {
+    expiresIn: maxDuration,
+  });
+};
 
 //To Display to signup page
 app.get("/api/auth/signup", (request, response) => {
@@ -51,12 +59,17 @@ app.post(
     //Saving user to the database
     try {
       const savedUser = await newUser.save();
-      request.session.user = {
-        id: savedUser.id,
-        username: savedUser.email,
-        role: savedUser.role,
-      };
-      return response.status(201).send(savedUser);
+      const token = createToken(savedUser._id);
+      response.cookie("jwt", token, {
+        httpOnly: true,
+        maxAge: maxDuration * 1000,
+      });
+      //   request.session.user = {
+      //     id: savedUser.id,
+      //     username: savedUser.email,
+      //     role: savedUser.role,
+      //   };
+      return response.status(201).send({ user: savedUser.id });
     } catch (err) {
       console.log(err);
       return response.sendStatus(400);
