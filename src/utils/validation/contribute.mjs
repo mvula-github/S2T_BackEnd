@@ -28,7 +28,7 @@ export const contributeFileHandler = (request, response) => {
 			subject,
 			grade,
 			tags,
-			createdBy: contributor.id, // Assuming contributor object has an 'id' property
+			createdBy: user.id, // Assuming user object has an 'id' property
 			fileSize: request.file.size,
 			isModerated: false, // Default state for new files
 		};

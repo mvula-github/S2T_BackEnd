@@ -1,6 +1,7 @@
-//fileModel
+//file schema/model
 // Import mongoose
 import mongoose from 'mongoose';
+
 
 // Create a schema for the files
 const fileSchema = new mongoose.Schema({
@@ -36,7 +37,7 @@ const fileSchema = new mongoose.Schema({
   },
   uploadedBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',  // Reference to the User model
+    ref: 'user',  // Reference to the User model
     required: true,
   },
   isModerated: {
