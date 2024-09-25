@@ -2,9 +2,8 @@ import express, { json, response, Router } from "express";
 import rootRouter from "./routes/rootRouter.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import passport from "passport";
 import mongoose from "mongoose";
-import "./strategies/local-strategy.mjs";
+import { checkUser, requireAuth } from "./utils/middleware/middleware.mjs";
 //import { createApp } from "./createApp.mjs";
 
 //Initialize the express app
@@ -31,16 +30,17 @@ app.use(
   })
 );
 
-//registering passport
-app.use(passport.initialize());
-app.use(passport.session());
-
-//route which contains all my other routes
-app.use(rootRouter);
-
+app.use("*", checkUser);
 app.get("/", (request, response) => {
   response.status(403).send({ msg: "Hello World" }); //this should render the landing page
 });
+
+app.get("/landing", requireAuth, (request, response) => {
+  response.status(403).send({ msg: "privilaged page" }); //this should render the pages with higher access rights e.g educator/moderator/admin
+});
+
+//route which contains all my other routes
+app.use(rootRouter);
 
 //starting the express server
 const PORT = process.env.PORT || 5000;

@@ -11,6 +11,7 @@ import {
   UnauthorizedError,
   ForbiddenError,
 } from "../utils/classes/errors.mjs";
+import { requireAuth } from "../utils/middleware/middleware.mjs";
 
 const app = Router();
 
@@ -18,10 +19,9 @@ app.use(express.json());
 
 //----------------------------------------GET--------------------------------------------
 //to view all users in the database
-app.get("/api/users", async (request, response, next) => {
+app.get("/api/users", requireAuth, async (request, response, next) => {
   try {
-    if (!request.session.user)
-      throw new UnauthorizedError("User not logged in"); //verify if user is logged in
+    if (!requireAuth) throw new UnauthorizedError("User not logged in"); //verify if user is logged in
 
     const allUsers = await User.find();
 

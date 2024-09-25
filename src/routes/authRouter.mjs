@@ -1,10 +1,9 @@
-import express, { response, Router } from "express";
+import express, { Router } from "express";
 import { User } from "../mongoose/schemas/user.mjs";
 import { validationResult, matchedData, checkSchema } from "express-validator";
 import { addUserValidation } from "../utils/validation/usersValidation.mjs";
-import passport from "passport";
-import "../strategies/local-strategy.mjs";
 import jwt from "jsonwebtoken";
+import { requireAuth } from "../utils/middleware/middleware.mjs";
 
 const app = Router();
 
@@ -37,82 +36,66 @@ app.post(
     if (!errors.isEmpty())
       return response.status(400).send(errors.array().map((err) => err.msg));
 
-    const {
-      body: { password, cPassword, email },
-    } = request;
+    const { password, cPassword, email, body } = request;
 
     //verifying if confirmation password matches password
     if (cPassword !== password)
       return response.status(400).send("Passwords do not match");
 
-    //To check if user already exists
-    const emailExists = await User.findOne({ email });
-    if (emailExists) {
-      return response.status(400).send("Email already exists");
-    }
-
     //declaring the new users with only valid data
+
     const data = matchedData(request);
-    const newUser = User(data);
-    console.log(newUser);
 
     //Saving user to the database
     try {
-      const savedUser = await newUser.save();
+      //saving user to database
+      const savedUser = await User.signup(email, data);
+      //creating jwt token and cookie
       const token = createToken(savedUser._id);
       response.cookie("jwt", token, {
         httpOnly: true,
         maxAge: maxDuration * 1000,
       });
-      //   request.session.user = {
-      //     id: savedUser.id,
-      //     username: savedUser.email,
-      //     role: savedUser.role,
-      //   };
-      return response.status(201).send({ user: savedUser.id });
+      return response.status(201).send(`Account created succesfully`);
     } catch (err) {
       console.log(err);
-      return response.sendStatus(400);
+      return response.status(400).send(`${err}`);
     }
   }
 );
 
 //USER LOGIN REQUEST
-app.post(
-  "/api/auth/login",
-  passport.authenticate("local"),
-  async (request, response) => {
-    const {
-      body: { email },
-    } = request;
-    try {
-      const findUser = await User.findOne({ email });
+app.post("/api/auth/login", async (request, response) => {
+  const {
+    body: { email, password },
+  } = request;
+  try {
+    //validation to check if user exits
+    const user = await User.login(email, password);
 
-      request.session.user = {
-        id: findUser.id,
-        username: findUser.email,
-        role: findUser.role,
-      };
-      console.log(request.session.user);
-      response.status(200).send("Loggin Successful");
-    } catch (err) {
-      response.status(500).send(`Error: ${err}`);
-    }
+    //creating jwt for user
+    const token = createToken(user._id);
+    response.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: maxDuration * 1000,
+    });
+
+    response.status(200).send("Loggin Successful");
+  } catch (err) {
+    response.status(400).send(`${err}`);
   }
-);
+});
 
 //USER LOGOUT REQUEST
-app.post("/api/auth/logout", (request, response) => {
-  if (!request.user) return response.status(401).send("User did not log in");
+app.post("/api/auth/logout", requireAuth, (request, response) => {
+  if (!requireAuth) return response.status(401).send("User did not log in");
 
-  request.logout((err) => {
-    if (err) return response.sendStatus(400);
-    response.status(200).send("Logged Out Succesfully");
-  });
+  response.cookie("jwt", "", { maxAge: 1 });
+  response.redirect("/");
 });
 
 //TO CHECK IF USER IS LOG IN STATUS
-app.get("/api/auth/status", (request, response) => {
+app.get("/api/auth/status", requireAuth, (request, response) => {
   console.log("This is the status endpoint ");
   console.log(request.user);
   console.log(request.session);
