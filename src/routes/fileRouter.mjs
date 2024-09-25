@@ -7,8 +7,8 @@ import {
   checkSchema,
 } from "express-validator";
 import {
-  mainFilevalidation,
-  patchFilevalidation,
+  mainFileValidation,
+  patchFileValidation,
 } from "../utils/validation/fileValidation.mjs";
 
 const app = Router();
@@ -16,7 +16,7 @@ const app = Router();
 //---------------------------------------------POST------------------------------------------------------
 app.post(
   "/api/files",
-  checkSchema(mainFilevalidation),
+  checkSchema(mainFileValidation),
   async (request, response) => {
     if (request.session.user) {
       const errorResult = validationResult(request);
@@ -33,7 +33,7 @@ app.post(
       try {
         const newFile = new file(data);
         await newFile.save();
-        return response.status(201).send("Added Succesfully");
+        return response.status(201).send("Added Successfully");
       } catch (err) {
         return response.sendStatus(400);
       }
@@ -74,7 +74,7 @@ app.get("/api/files/:id", async (request, response) => {
 //to update the file for the contribute page
 app.patch(
   "/api/files/:id",
-  checkSchema(patchFilevalidation),
+  checkSchema(patchFileValidation),
   async (request, response) => {
     if (request.session.user) {
       const errorResult = validationResult(request);
@@ -93,7 +93,7 @@ app.patch(
 
         if (!updatedFile) return response.status(404).send("File not found");
 
-        response.status(201).send("File updated successlly");
+        response.status(201).send("File updated successfully");
       } catch (err) {
         return response.status(500).send(`Failed to update File: ${err}`);
       }
@@ -106,7 +106,7 @@ app.patch(
 //---------------------------------------------PUT------------------------------------------------------
 app.put(
   "/api/files/:id",
-  checkSchema(mainFilevalidation),
+  checkSchema(mainFileValidation),
   async (request, response) => {
     if (request.session.user) {
       const errorResult = validationResult(request);
@@ -127,7 +127,7 @@ app.put(
 
         if (!updatedFile) return response.status(404).send("File not found");
 
-        response.status(201).send("File updated successlly");
+        response.status(201).send("File updated successfully");
       } catch (err) {
         return response.status(500).send(`Failed to update File: ${err}`);
       }
