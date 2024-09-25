@@ -1,5 +1,7 @@
-import mongoose, { mongo, Types } from "mongoose";
 
+const mongoose = require('mongoose');
+
+// how the schema of the document should be
 const docSchema = new mongoose.Schema({
     title: {type: String, required: true},
     subject: {type: String, required: true},
@@ -9,4 +11,4 @@ const docSchema = new mongoose.Schema({
     uploadDate: {type: Date, default: Date.now},
 });
 
-module.exports = mongoose.model('Document', docSchema);
+export default mongoose.model('Document', docSchema);
