@@ -7,7 +7,7 @@ import {
 	matchedData,
 } from "express-validator";
 import { mockContributors } from "../utils/constants.mjs";
-import { createContributorValidationSchema } from "../utils/validationSchemas.mjs";
+import { createContributorValidationSchema } from "../utils/validationContributorSchemas.mjs";
 import { resolveIndexByContributorId } from "../utils/middlewares.mjs";
 import { Contributor } from "../mongoose/schemas/contributor.mjs";
 import { hashPassword } from "../utils/helpers.mjs";
