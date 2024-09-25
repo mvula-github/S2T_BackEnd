@@ -105,4 +105,25 @@ app.get("/api/auth/status", requireAuth, (request, response) => {
     : response.status(401).send(" User Not Authenticated");
 });
 
+app.post("/api/auth/forgotPassword", async (request, response, next) => {
+  try {
+    const { email } = request.body;
+    //get user based on email
+    console.log(email);
+    const theUser = await User.findOne({ email });
+
+    if (!theUser) throw new NotFoundError("User email not found");
+
+    //genneraete random token
+    const resetToken = theUser.resetPasswordToken();
+
+    await theUser.save({ validateBeforeSave: false });
+    //send token to user via email
+
+    response.send("check email for verification");
+  } catch (err) {
+    next(`${err}`);
+  }
+});
+
 export default app;
