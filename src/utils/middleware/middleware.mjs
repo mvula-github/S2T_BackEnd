@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+
 // errorHandler.js
 const errorHandler = async (err, request, response, next) => {
   console.error(err.stack);
@@ -13,3 +15,15 @@ const errorHandler = async (err, request, response, next) => {
 };
 
 export default errorHandler;
+
+//AUTHENTICATION OF jwt
+
+const requireAuth = (request, response, next) => {
+  const token = request.cookies.jwt;
+
+  //check if web token exist
+  if (!token) return response.send("redirect user to login page");
+
+  jwt.verify(token, "");
+  next();
+};
