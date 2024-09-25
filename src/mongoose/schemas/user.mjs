@@ -5,6 +5,7 @@ import {
   UnauthorizedError,
 } from "../../utils/classes/errors.mjs";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 const UserSchema = new mongoose.Schema({
   fName: { type: String, required: true, unique: false },
@@ -14,6 +15,8 @@ const UserSchema = new mongoose.Schema({
   affiliation: { type: String, required: false, unique: false, default: null },
   credentials: { type: String, required: false, unique: false, default: null },
   role: { type: String, required: false, unique: false, default: "educator" },
+  passwordResetToken: String,
+  passwordTokenExpire: Date,
 });
 
 UserSchema.pre("save", async function (next) {
