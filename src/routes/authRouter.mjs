@@ -56,17 +56,15 @@ app.post(
 
     //Saving user to the database
     try {
+      //saving user to database
       const savedUser = await newUser.save();
+
+      //creating jwt token and cookie
       const token = createToken(savedUser._id);
       response.cookie("jwt", token, {
         httpOnly: true,
         maxAge: maxDuration * 1000,
       });
-      //   request.session.user = {
-      //     id: savedUser.id,
-      //     username: savedUser.email,
-      //     role: savedUser.role,
-      //   };
       return response.status(201).send({ user: savedUser.id });
     } catch (err) {
       console.log(err);
@@ -78,21 +76,22 @@ app.post(
 //USER LOGIN REQUEST
 app.post("/api/auth/login", async (request, response) => {
   const {
-    body: { email },
+    body: { email, password },
   } = request;
   try {
-    const findUser = await User.findOne({ email });
+    //validation to check if user exits
+    const user = await User.login(email, password);
 
-    request.session.user = {
-      id: findUser.id,
-      username: findUser.email,
-      role: findUser.role,
-    };
+    //creating jwt for user
+    const token = createToken(user._id);
+    response.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: maxDuration * 1000,
+    });
 
-    console.log(request.session.user);
     response.status(200).send("Loggin Successful");
   } catch (err) {
-    response.status(500).send(`Error: ${err}`);
+    response.status(400).send(`Error: ${err}`);
   }
 });
 
