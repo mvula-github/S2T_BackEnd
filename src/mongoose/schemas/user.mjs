@@ -46,4 +46,20 @@ UserSchema.statics.login = async function (email, password) {
   return user;
 };
 
+UserSchema.methods.resetPasswordToken = function () {
+  //generating token to send to the user
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.passwordTokenExpire = Date.now() + 10 * 60 * 1000; //time in miliseconds
+
+  console.log(resetToken, this.passwordResetToken);
+
+  //give user the resetToken
+  return resetToken;
+};
+
 export const User = mongoose.model("User", UserSchema);
