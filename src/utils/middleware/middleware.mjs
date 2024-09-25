@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { User } from "../../mongoose/schemas/user.mjs";
 
 // errorHandler.js
 const errorHandler = async (err, request, response, next) => {
@@ -33,4 +34,29 @@ const requireAuth = (request, response, next) => {
   });
 };
 
-export { errorHandler, requireAuth };
+//check current user
+
+const checkUser = (request, response, next) => {
+  const token = request.cookies.jwt;
+
+  //check if web token exist
+  if (token) {
+    jwt.verify(token, "secret signature", async (err, decodedToken) => {
+      if (err) {
+        console.log(err.message);
+        next();
+      } else {
+        console.log(decodedToken);
+
+        let user = await User.findByI(decodedToken.id);
+        response.locals.user = user; // injecting it to views for some get methods
+        next();
+      }
+    });
+  } else {
+    response.locals.user = null;
+    next();
+  }
+};
+
+export { errorHandler, requireAuth, checkUser };
