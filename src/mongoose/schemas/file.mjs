@@ -1,7 +1,6 @@
 //file schema/model
 // Import mongoose
-import mongoose from 'mongoose';
-
+import mongoose from "mongoose";
 
 // Create a schema for the files
 const fileSchema = new mongoose.Schema({
@@ -11,7 +10,7 @@ const fileSchema = new mongoose.Schema({
     trim: true,
     maxlength: [20, "File name cannot be more than 20 characters"],
   },
-  fileType: { 
+  fileType: {
     type: String,
     required: true,
   },
@@ -37,14 +36,14 @@ const fileSchema = new mongoose.Schema({
   },
   uploadedBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',  // Reference to the User model
+    ref: "user", // Reference to the User model
     required: true,
   },
   isModerated: {
     type: Boolean,
-    default: false,  // False by default, will be changed once moderated
-  }
+    default: false, // False by default, will be changed once moderated
+  },
 });
 
 // Export the model
-export const File = mongoose.model('File', fileSchema);
+export const File = mongoose.model("File", fileSchema);

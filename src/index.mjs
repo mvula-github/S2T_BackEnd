@@ -7,11 +7,9 @@ import mongoose from "mongoose";
 import "./strategies/local-strategy.mjs";
 //import { createApp } from "./createApp.mjs";
 
-
 //Initialize the express app
 const app = express();
 //const app = createApp();
-
 
 mongoose
   .connect("mongodb://localhost:27017/share2teach")

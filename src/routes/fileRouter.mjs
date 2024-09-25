@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { file } from "../mongoose/schemas/file.mjs";
+import { File } from "../mongoose/schemas/file.mjs";
 import {
   validationResult,
   body,
@@ -31,7 +31,7 @@ app.post(
 
       //adding the new File
       try {
-        const newFile = new file(data);
+        const newFile = new File(data);
         await newFile.save();
         return response.status(201).send("Added Successfully");
       } catch (err) {
@@ -47,7 +47,7 @@ app.post(
 
 app.get("/api/files", async (request, response) => {
   try {
-    const allFiles = await file.find();
+    const allFiles = await File.find();
     response.status(200).send(allFiles);
   } catch (err) {
     return response.status(500).send("Failed to retrieve all Files");
@@ -61,7 +61,7 @@ app.get("/api/files/:id", async (request, response) => {
   } = request;
 
   try {
-    const theFile = await file.findById(id);
+    const theFile = await File.findById(id);
     if (!theFile) return response.status(404).send("File not found");
 
     response.status(200).send(theFile);
@@ -89,7 +89,7 @@ app.patch(
       } = request;
       const data = matchedData(request);
       try {
-        const updatedFile = await file.findByIdAndUpdate(id, data);
+        const updatedFile = await F.findByIdAndUpdate(id, data);
 
         if (!updatedFile) return response.status(404).send("File not found");
 
@@ -123,7 +123,7 @@ app.put(
       const data = matchedData(request);
 
       try {
-        const updatedFile = await file.findByIdAndUpdate(id, data);
+        const updatedFile = await File.findByIdAndUpdate(id, data);
 
         if (!updatedFile) return response.status(404).send("File not found");
 
@@ -145,7 +145,7 @@ app.delete("/api/files/:id", async (request, response) => {
     } = request;
 
     try {
-      const deletedFile = await file.findByIdAndDelete(id);
+      const deletedFile = await File.findByIdAndDelete(id);
 
       if (!deletedFile) return response.status(404).send("File not found");
 
