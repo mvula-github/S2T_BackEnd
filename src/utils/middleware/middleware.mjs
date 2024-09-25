@@ -14,8 +14,6 @@ const errorHandler = async (err, request, response, next) => {
   next();
 };
 
-export default errorHandler;
-
 //AUTHENTICATION OF jwt
 
 const requireAuth = (request, response, next) => {
@@ -24,6 +22,15 @@ const requireAuth = (request, response, next) => {
   //check if web token exist
   if (!token) return response.send("redirect user to login page");
 
-  jwt.verify(token, "");
-  next();
+  jwt.verify(token, "secret signature", (err, decodedToken) => {
+    if (err) {
+      console.log(err.message);
+      return response.send("redirect user to login page");
+    } else {
+      console.log(decodedToken);
+      next();
+    }
+  });
 };
+
+export { errorHandler, requireAuth };

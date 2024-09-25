@@ -2,9 +2,8 @@ import express, { json, response, Router } from "express";
 import rootRouter from "./routes/rootRouter.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import passport from "passport";
 import mongoose from "mongoose";
-import "./strategies/local-strategy.mjs";
+import { requireAuth } from "./utils/middleware/middleware.mjs";
 
 //Initialize the express app
 const app = express();
@@ -29,14 +28,14 @@ app.use(
   })
 );
 
-//registering passport
-app.use(passport.initialize());
-app.use(passport.session());
-
 //route which contains all my other routes
 app.use(rootRouter);
 
 app.get("/", (request, response) => {
+  response.status(403).send({ msg: "Hello World" }); //this should render the landing page
+});
+
+app.get("/landing", requireAuth, (request, response) => {
   response.status(403).send({ msg: "Hello World" }); //this should render the landing page
 });
 

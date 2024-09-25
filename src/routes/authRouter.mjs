@@ -1,9 +1,7 @@
-import express, { response, Router } from "express";
+import express, { Router } from "express";
 import { User } from "../mongoose/schemas/user.mjs";
 import { validationResult, matchedData, checkSchema } from "express-validator";
 import { addUserValidation } from "../utils/validation/usersValidation.mjs";
-import passport from "passport";
-import "../strategies/local-strategy.mjs";
 import jwt from "jsonwebtoken";
 
 const app = Router();
@@ -78,28 +76,25 @@ app.post(
 );
 
 //USER LOGIN REQUEST
-app.post(
-  "/api/auth/login",
-  passport.authenticate("local"),
-  async (request, response) => {
-    const {
-      body: { email },
-    } = request;
-    try {
-      const findUser = await User.findOne({ email });
+app.post("/api/auth/login", async (request, response) => {
+  const {
+    body: { email },
+  } = request;
+  try {
+    const findUser = await User.findOne({ email });
 
-      request.session.user = {
-        id: findUser.id,
-        username: findUser.email,
-        role: findUser.role,
-      };
-      console.log(request.session.user);
-      response.status(200).send("Loggin Successful");
-    } catch (err) {
-      response.status(500).send(`Error: ${err}`);
-    }
+    request.session.user = {
+      id: findUser.id,
+      username: findUser.email,
+      role: findUser.role,
+    };
+
+    console.log(request.session.user);
+    response.status(200).send("Loggin Successful");
+  } catch (err) {
+    response.status(500).send(`Error: ${err}`);
   }
-);
+});
 
 //USER LOGOUT REQUEST
 app.post("/api/auth/logout", (request, response) => {
