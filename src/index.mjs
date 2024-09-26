@@ -17,12 +17,10 @@ mongoose
 app.use(express.json()); // Parsing JSON request bodies
 app.use(cookieParser()); // Parse cookies
 
-
-
 app.set("view engine", "ejs");
 
 app.use(cookieParser());
- 
+
 app.use(
   session({
     secret: "secretPassword",
@@ -31,11 +29,6 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 2, secure: true, httpOnly: true }, //set cookie to 2 hour
   })
 );
-
-
-// Registering passport
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use("*", checkUser);
 app.get("/", (request, response) => {
@@ -46,10 +39,8 @@ app.get("/landing", requireAuth, (request, response) => {
   response.status(403).send({ msg: "privilaged page" }); //this should render the pages with higher access rights e.g educator/moderator/admin
 });
 
-
 // Root route which contains other routes
 app.use(rootRouter);
-
 
 // Simple route for testing
 app.get("/", (request, response) => {
@@ -59,7 +50,7 @@ app.get("/", (request, response) => {
 // Starting the express server
 
 //starting the express server
- 
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Running on Port ${PORT}`);
