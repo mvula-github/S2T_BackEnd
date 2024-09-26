@@ -4,6 +4,7 @@ import { validationResult, matchedData, checkSchema } from "express-validator";
 import { addUserValidation } from "../utils/validation/usersValidation.mjs";
 import jwt from "jsonwebtoken";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
+import { sendEmail } from "../utils/email.mjs";
 
 const app = Router();
 
@@ -119,13 +120,35 @@ app.post("/api/auth/forgotPassword", async (request, response, next) => {
 
     await theUser.save({ validateBeforeSave: false });
     //send token to user via email
+    const resetURL = `${request.protocol}://${request.get(
+      "host"
+    )}//api/v1/users.resetPassword/${resetToken}`;
 
+    const theMessage = `Please use the link below to reset your password\n\n${resetURL}\n\nThis reset password link is valid for only 10 minutes`;
+
+    try {
+      await sendEmail({
+        email: theUser.email,
+        subject: `Password change request recieved`,
+        message: theMessage,
+      });
+
+      response.status().send("password reset link is send to the user email");
+    } catch (error) {
+      theUser.passwordResetToken = undefined;
+      theUser.passwordTokenExpire = undefined;
+      theUser.save({ validateBeforeSave: false });
+      return next(`There was an error with sending the email`);
+    }
     response.send("check email for verification");
   } catch (err) {
     next(`${err}`);
   }
 });
 
-app.post("/api/auth/resetPassword", async (request, response, next) => {});
+app.patch(
+  "/api/auth/resetPassword/:token",
+  async (request, response, next) => {}
+);
 
 export default app;

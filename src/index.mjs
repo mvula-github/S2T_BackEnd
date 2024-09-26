@@ -1,6 +1,5 @@
 import express, { json } from "express";
 import rootRouter from "./routes/rootRouter.mjs";
-import fileUploadRouter from "./routes/fileUpload.mjs"; // Import file upload route
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import mongoose from "mongoose";
@@ -48,7 +47,7 @@ app.get("/landing", requireAuth, (req, res) => {
 app.use(rootRouter);
 
 // **Add the file upload route here**
-app.use("/api/files", fileUploadRouter);  // File upload route
+app.use("/api/files", fileUploadRouter); // File upload route
 
 // Start the express server
 const PORT = process.env.PORT || 5000;

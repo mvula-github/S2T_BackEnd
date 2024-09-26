@@ -80,12 +80,10 @@ router.use((err, req, res, next) => {
         .json({ message: "File is too large. Maximum file size is 5MB." });
     }
   } else if (err.message === "Incorrect file type") {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Incorrect file type. Allowed types are PDF, DOC, DOCX, JPEG, PNG.",
-      });
+    return res.status(400).json({
+      message:
+        "Incorrect file type. Allowed types are PDF, DOC, DOCX, JPEG, PNG.",
+    });
   }
   return res
     .status(500)
