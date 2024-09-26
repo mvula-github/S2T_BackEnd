@@ -48,7 +48,7 @@ router.get("/api/ratings/:fileId", async (req, res) => {
 });
 
 // PATCH (update) a rating for a specific file by file ID and user ID
-router.patch("/:fileId", async (req, res) => {
+router.patch("api/ratings/:fileId", async (req, res) => {
   const { fileId } = req.params;
   const { rating, comment } = req.body;
 
