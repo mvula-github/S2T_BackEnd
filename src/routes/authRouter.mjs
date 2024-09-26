@@ -126,4 +126,6 @@ app.post("/api/auth/forgotPassword", async (request, response, next) => {
   }
 });
 
+app.post("/api/auth/resetPassword", async (request, response, next) => {});
+
 export default app;
