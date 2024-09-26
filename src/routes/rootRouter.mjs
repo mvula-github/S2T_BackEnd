@@ -14,6 +14,6 @@ const rootRouter = express.Router();
 // Include the file upload routes
 //rootRouter.use("/api", uploadRouter); // Your upload route will be `/api/upload`
 //app.use(uploadRouter, storageRouter, authorRouter, guideRouter, tutorialRouter);
-app.use(faqRouter, usersRouter, authRouter);
+app.use(faqRouter, usersRouter, authRouter, uploadRouter);
 
 export default app;

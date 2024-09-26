@@ -1,25 +1,26 @@
-import express from "express";
+import express, { response } from "express";
 import multer from "multer";
 import path from "path";
 import Upload from "../../mongoose/schemas/upload.mjs"; // Import the upload schema
+import fs from "fs"; // Required for checking file existence
 
 const router = express.Router();
 
 // Set file size limit to 15MB
-const MAX_FILE_SIZE = 15 * 1024 * 1024;
+const MAX_FILE_SIZE = 30 * 1024 * 1024; //30mb
 
 // Multer storage configuration
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
+  destination: function (request, file, cb) {
+    cb(null, "C:\\Users\\user\\Desktop\\Backend\\src\\uploads");
   },
-  filename: function (req, file, cb) {
+  filename: function (request, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
 // Multer file filter
-const fileFilter = (req, file, cb) => {
+const fileFilter = (request, file, cb) => {
   const allowedFileTypes = [
     "application/pdf",
     "application/msword",
@@ -40,54 +41,90 @@ const upload = multer({
 });
 
 // POST route for file upload
-router.post("/upload", upload.single("userFile"), async (req, res) => {
-  const { fileName, fileType, subject, grade } = req.body;
+router.post(
+  "/api/uploads",
+  upload.single("file"),
+  async (request, response) => {
+    const { fileName, fileType, subject, grade, year, category, description } =
+      request.body;
+    // Check for required fields
+    if (
+      !fileName ||
+      !fileType ||
+      !subject ||
+      !grade ||
+      !request.file ||
+      !year ||
+      !category
+    ) {
+      return response
+        .status(400)
+        .send({ message: "All fields are required, including the file" });
+    }
 
-  // Check for required fields
-  if (!fileName || !fileType || !subject || !grade || !req.file) {
-    return res
-      .status(400)
-      .json({ message: "All fields are required, including the file" });
+    // Check if the file already exists in the database
+    const existingFile = await Upload.findOne({
+      fileName: request.file.originalname, // Use the original filename
+      fileType: request.file.mimetype.split("/")[1], // Check by file type
+    });
+
+    if (existingFile) {
+      // If a file with the same name and type exists, send an error response
+      return response.status(400).send({ message: "File already exists" });
+    }
+
+    // Validation for file type and size already handled by multer
+    const newFile = new Upload({
+      userFile: request.file.path,
+      fileType: request.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
+      fileName: request.file.originalname,
+      subject,
+      grade,
+      year,
+      category,
+      description,
+    });
+    if (request.file.path === Upload.findOne(request.file.path))
+      return response.status(400).send("File already exits");
+    try {
+      await newFile.save();
+      response
+        .status(201)
+        .send({ message: "File uploaded successfully", file: newFile });
+    } catch (error) {
+      response.status(500).send({ message: "File upload failed", error });
+    }
   }
-
-  // Validation for file type and size already handled by multer
-
-  const newFile = new Upload({
-    userFile: req.file.path,
-    fileType: req.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
-    fileName,
-    subject,
-    grade,
-  });
-
-  try {
-    await newFile.save();
-    res
-      .status(201)
-      .json({ message: "File uploaded successfully", file: newFile });
-  } catch (error) {
-    res.status(500).json({ message: "File upload failed", error });
-  }
-});
+);
 
 // Global error handler for file validation errors
-router.use((err, req, res, next) => {
+router.use((err, request, response, next) => {
   if (err instanceof multer.MulterError) {
     // Multer-specific errors
     if (err.code === "LIMIT_FILE_SIZE") {
-      return res
+      return response
         .status(400)
         .json({ message: "File is too large. Maximum file size is 5MB." });
     }
   } else if (err.message === "Incorrect file type") {
-    return res.status(400).json({
+    return response.status(400).json({
       message:
         "Incorrect file type. Allowed types are PDF, DOC, DOCX, JPEG, PNG.",
     });
   }
-  return res
+  return response
     .status(500)
     .json({ message: "An error occurred", error: err.message });
+});
+
+router.get("/api/uploads", async (request, response) => {
+  try {
+    const allUploads = await Upload.find();
+
+    response.status(200).send(allUploads);
+  } catch (err) {
+    response.send(`${err}`);
+  }
 });
 
 export default router;

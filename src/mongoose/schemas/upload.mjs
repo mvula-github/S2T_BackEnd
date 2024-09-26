@@ -22,6 +22,9 @@ const uploadSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  year: { type: Number, required: true },
+  category: { type: String, required: true },
+  description: { type: String, required: true },
   dateCreated: {
     type: Date,
     default: Date.now,
