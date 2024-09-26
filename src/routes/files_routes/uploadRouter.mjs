@@ -47,6 +47,7 @@ router.post(
   async (request, response) => {
     const { fileName, fileType, subject, grade, year, category, description } =
       request.body;
+
     // Check for required fields
     if (
       !fileName ||
@@ -78,6 +79,7 @@ router.post(
       userFile: request.file.path,
       fileType: request.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
       fileName: request.file.originalname,
+      size: request.file.size,
       subject,
       grade,
       year,
