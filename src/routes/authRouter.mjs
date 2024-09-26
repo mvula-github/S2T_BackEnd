@@ -36,7 +36,7 @@ app.post(
     if (!errors.isEmpty())
       return response.status(400).send(errors.array().map((err) => err.msg));
 
-    const { password, cPassword, email, body } = request;
+    const { password, cPassword, email } = request;
 
     //verifying if confirmation password matches password
     if (cPassword !== password)

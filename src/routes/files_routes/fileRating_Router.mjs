@@ -1,62 +1,72 @@
-import express from 'express';
-import FileRating from '../../mongoose/schemas/fileRating.mjs';  // assuming file structure
-import { validationResult } from 'express-validator';  // for validation if needed
+import express from "express";
+import { Rating } from "../../mongoose/schemas/ratings.mjs"; // assuming file structure
+import { validationResult, checkSchema } from "express-validator"; // for validation if needed
+import { validateFileRating } from "../validators/fileRatingValidator.js";
+
 const router = express.Router();
 
+router.post(
+  "api/ratings",
+  checkSchema(validateFileRating),
+  async (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty())
+      return response.status(400).send(errors.array().map((err) => err.msg));
+
+    try {
+      const { fileId, rating, comment } = request.body;
+
+      // Create a new file rating
+      const ratings = new Rating({
+        fileId,
+        rating,
+        comment,
+      });
+
+      await ratings.save();
+      response.status(201).json(fileRating);
+    } catch (error) {
+      response.status(500).json({ message: error.message });
+    }
+  }
+);
+
 // GET all ratings for a specific file by file ID
-router.get('/:fileId', async (req, res) => {
-    const { fileId } = req.params;
-    try {
-        const ratings = await FileRating.find({ fileId });
-        if (!ratings) {
-            return res.status(404).json({ message: 'No ratings found for this file' });
-        }
-        res.status(200).json(ratings);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching ratings', error });
+router.get("/api/ratings/:fileId", async (req, res) => {
+  const { fileId } = req.params;
+  try {
+    const ratings = await FileRating.find({ fileId });
+    if (!ratings) {
+      return res
+        .status(404)
+        .json({ message: "No ratings found for this file" });
     }
-});
-
-// POST a new rating for a file
-router.post('/', async (req, res) => {
-    const { fileId, rating, comment } = req.body;
-
-    // Check if the user has already rated this file
-    const existingRating = await FileRating.findOne({ fileId  });
-    if (existingRating) {
-        return res.status(400).json({ message: 'User has already rated this file' });
-    }
-
-    // Create a new rating
-    const newRating = new FileRating({ fileId, rating, comment });
-    try {
-        await newRating.save();
-        res.status(201).json(newRating);
-    } catch (error) {
-        res.status(400).json({ message: 'Error saving rating', error });
-    }
+    res.status(200).json(ratings);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching ratings", error });
+  }
 });
 
 // PATCH (update) a rating for a specific file by file ID and user ID
-router.patch('/:fileId', async (req, res) => {
-    const { fileId  } = req.params;
-    const { rating, comment } = req.body;
+router.patch("/:fileId", async (req, res) => {
+  const { fileId } = req.params;
+  const { rating, comment } = req.body;
 
-    try {
-        const updatedRating = await FileRating.findOneAndUpdate(
-            { fileId },
-            { rating, comment, updatedAt: Date.now() },  // update rating and comment
-            { new: true }  // return the updated document
-        );
+  try {
+    const updatedRating = await FileRating.findOneAndUpdate(
+      { fileId },
+      { rating, comment, updatedAt: Date.now() }, // update rating and comment
+      { new: true } // return the updated document
+    );
 
-        if (!updatedRating) {
-            return res.status(404).json({ message: 'Rating not found' });
-        }
-
-        res.status(200).json(updatedRating);
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating rating', error });
+    if (!updatedRating) {
+      return res.status(404).json({ message: "Rating not found" });
     }
+
+    res.status(200).json(updatedRating);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating rating", error });
+  }
 });
 
 export default router;
