@@ -46,9 +46,6 @@ app.get("/landing", requireAuth, (req, res) => {
 // Root route for other routes
 app.use(rootRouter);
 
-// **Add the file upload route here**
-app.use("/api/files", fileUploadRouter); // File upload route
-
 // Start the express server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

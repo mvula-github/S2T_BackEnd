@@ -2,7 +2,7 @@
 import express, { Router } from "express";
 import multer from "multer";
 import { body, validationResult } from "express-validator";
-import { Tutorial } from "../../mongoose/schemas/oer.mjs"; // Adjust the path as necessary
+import Tutorial from "../../mongoose/schemas/oer.mjs"; // Adjust the path as necessary
 
 const router = Router();
 
@@ -90,7 +90,5 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-module.exports = router;
 
 export default router; // Export the router

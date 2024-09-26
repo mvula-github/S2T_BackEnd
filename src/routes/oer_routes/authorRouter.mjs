@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { Author } from "../../mongoose/schemas/oer.mjs";
+import Author from "../../mongoose/schemas/oer.mjs";
 
 const router = Router();
 
@@ -83,5 +83,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
 export default router;

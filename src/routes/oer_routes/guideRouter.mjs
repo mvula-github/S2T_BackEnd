@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { Guide } from "../../mongoose/schemas/oer.mjs";
+import Guide from "../../mongoose/schemas/oer.mjs";
 
 const router = Router();
 
@@ -82,7 +82,5 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-module.exports = router;
 
 export default router;

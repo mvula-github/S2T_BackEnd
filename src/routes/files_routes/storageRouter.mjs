@@ -1,22 +1,22 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
-import File from "../../mongoose/schemas/file.mjs"; // Your file schema
+import Storage from "../../mongoose/schemas/storage.mjs"; // Your storage schema
 
 const router = express.Router();
 
 // Multer storage configuration
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (request, file, cb) {
     cb(null, "uploads/"); // specify the upload folder
   },
-  filename: function (req, file, cb) {
+  filename: function (request, file, cb) {
     cb(null, Date.now() + "-" + file.originalname); // generate a unique file name
   },
 });
 
 // File filter to accept only specific file types (e.g., PDF, images)
-const fileFilter = (req, file, cb) => {
+const fileFilter = (request, file, cb) => {
   const allowedTypes = ["application/pdf"];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
@@ -33,16 +33,16 @@ const upload = multer({
 });
 
 // POST route for file upload
-router.post("/api/upload", upload.single("file"), async (req, res) => {
-  if (!req.file) {
-    return res
+router.post("/api/upload", upload.single("file"), async (request, response) => {
+  if (!request.file) {
+    return response
       .status(400)
       .json({ message: "No file uploaded or invalid file type" });
   }
 
   // Save file metadata to the database
-  const { originalname, path: filePath, size, mimetype } = req.file;
-  const newFile = new File({
+  const { originalname, path: filePath, size, mimetype } = request.file;
+  const newFile = new Storage({
     originalName: originalname,
     filePath: filePath,
     size: size,
@@ -51,11 +51,11 @@ router.post("/api/upload", upload.single("file"), async (req, res) => {
 
   try {
     await newFile.save();
-    res
+    response
       .status(201)
       .json({ message: "File uploaded successfully", file: newFile });
   } catch (error) {
-    res.status(500).json({ message: "Error saving file metadata", error });
+    response.status(500).json({ message: "Error saving file metadata", error });
   }
 });
 

@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
-import File from "../mongoose/schemas/fileUploadSchema.mjs"; // Import the File schema
+import Upload from "../../mongoose/schemas/upload.mjs"; // Import the upload schema
 
 const router = express.Router();
 
@@ -52,7 +52,7 @@ router.post("/upload", upload.single("userFile"), async (req, res) => {
 
   // Validation for file type and size already handled by multer
 
-  const newFile = new File({
+  const newFile = new Upload({
     userFile: req.file.path,
     fileType: req.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
     fileName,

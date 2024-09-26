@@ -4,7 +4,13 @@ import { validationResult, matchedData, checkSchema } from "express-validator";
 import { addUserValidation } from "../utils/validation/usersValidation.mjs";
 import jwt from "jsonwebtoken";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
-import { sendEmail } from "../utils/email.mjs";
+import sendEmail from "../utils/email.mjs";
+import {
+  NotFoundError,
+  ValidationError,
+  UnauthorizedError,
+  ForbiddenError,
+} from "../utils/classes/errors.mjs";
 
 const app = Router();
 
@@ -138,6 +144,7 @@ app.post("/api/auth/forgotPassword", async (request, response, next) => {
       theUser.passwordResetToken = undefined;
       theUser.passwordTokenExpire = undefined;
       theUser.save({ validateBeforeSave: false });
+      console.log(error);
       return next(`There was an error with sending the email`);
     }
     response.send("check email for verification");

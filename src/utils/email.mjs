@@ -5,20 +5,31 @@ const sendEmail = async (option) => {
   //the tech used is mail-trap
 
   const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false, // true for port 465, false for other ports
     auth: {
-      user: process.env.EMAIL_USER,
-      password: process.env.EMAIL_PASSWORD,
+      user: "maddison53@ethereal.email",
+      pass: "jn7jnAPss4f63QBp6D",
     },
+    tls: {
+      rejectUnauthorized: false, // correct property name
+    },
+    connectionTimeout: 1000000,
   });
+
+  console.log(
+    process.env.EMAIL_HOST,
+    process.env.EMAIL_USER,
+    process.env.EMAIL_PASSWORD
+  );
 
   //definne the email options
   const emailOptions = {
-    from: "Cineflix support<support@cineflix.com>",
+    from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
     to: option.email,
     subject: option.subject,
-    text: email.message,
+    text: option.message,
   };
 
   await transporter.sendMail(emailOptions);
