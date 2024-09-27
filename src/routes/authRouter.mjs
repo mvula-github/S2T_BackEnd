@@ -4,6 +4,13 @@ import { validationResult, matchedData, checkSchema } from "express-validator";
 import { addUserValidation } from "../utils/validation/usersValidation.mjs";
 import jwt from "jsonwebtoken";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
+import sendEmail from "../utils/email.mjs";
+import {
+  NotFoundError,
+  ValidationError,
+  UnauthorizedError,
+  ForbiddenError,
+} from "../utils/classes/errors.mjs";
 
 const app = Router();
 
@@ -36,7 +43,7 @@ app.post(
     if (!errors.isEmpty())
       return response.status(400).send(errors.array().map((err) => err.msg));
 
-    const { password, cPassword, email, body } = request;
+    const { password, cPassword, email } = request;
 
     //verifying if confirmation password matches password
     if (cPassword !== password)
@@ -119,11 +126,36 @@ app.post("/api/auth/forgotPassword", async (request, response, next) => {
 
     await theUser.save({ validateBeforeSave: false });
     //send token to user via email
+    const resetURL = `${request.protocol}://${request.get(
+      "host"
+    )}//api/v1/users.resetPassword/${resetToken}`;
 
+    const theMessage = `Please use the link below to reset your password\n\n${resetURL}\n\nThis reset password link is valid for only 10 minutes`;
+
+    try {
+      await sendEmail({
+        email: theUser.email,
+        subject: `Password change request recieved`,
+        message: theMessage,
+      });
+
+      response.status().send("password reset link is send to the user email");
+    } catch (error) {
+      theUser.passwordResetToken = undefined;
+      theUser.passwordTokenExpire = undefined;
+      theUser.save({ validateBeforeSave: false });
+      console.log(error);
+      return next(`There was an error with sending the email`);
+    }
     response.send("check email for verification");
   } catch (err) {
     next(`${err}`);
   }
 });
+
+app.patch(
+  "/api/auth/resetPassword/:token",
+  async (request, response, next) => {}
+);
 
 export default app;
