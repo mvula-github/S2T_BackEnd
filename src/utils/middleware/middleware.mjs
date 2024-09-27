@@ -1,19 +1,6 @@
 import jwt from "jsonwebtoken";
 import { User } from "../../mongoose/schemas/user.mjs";
-
-// errorHandler.js
-const errorHandler = async (err, request, response, next) => {
-  console.error(err.stack);
-
-  if (err.isOperational) {
-    return response.status(err.statusCode).send({ error: err.message });
-  }
-
-  // For unhandled errors, return a generic message
-  return response.status(500).send({ error: "An unexpected error occurred!" });
-
-  next();
-};
+import multer from "multer";
 
 //AUTHENTICATION OF jwt
 
@@ -35,7 +22,6 @@ const requireAuth = (request, response, next) => {
 };
 
 //check current user
-
 const checkUser = (request, response, next) => {
   const token = request.cookies.jwt;
 
@@ -47,8 +33,7 @@ const checkUser = (request, response, next) => {
         next();
       } else {
         console.log(decodedToken);
-
-        let user = await User.findByI(decodedToken.id);
+        let user = await User.findById(decodedToken.id);
         response.locals.user = user; // injecting it to views for some get methods
         next();
       }
@@ -59,4 +44,23 @@ const checkUser = (request, response, next) => {
   }
 };
 
-export { errorHandler, requireAuth, checkUser };
+const errorFileHandler = (err, request, response, next) => {
+  if (err instanceof multer.MulterError) {
+    // Multer-specific errors
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return response
+        .status(400)
+        .json({ message: "File is too large. Maximum file size is 15MB." });
+    }
+  } else if (err.message === "Incorrect file type") {
+    return response.status(400).json({
+      message:
+        "Incorrect file type. Allowed types are PDF, DOC, DOCX, JPEG, PNG.",
+    });
+  }
+  return response
+    .status(500)
+    .json({ message: "An error occurred", error: err.message });
+};
+
+export { requireAuth, checkUser, errorFileHandler };
