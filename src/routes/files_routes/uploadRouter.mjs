@@ -82,11 +82,31 @@ router.post(
       return response.status(400).send({ message: "File already exists" });
     }
 
+    const originalFilename = request.file.originalname;
+    const fileExtension = path.extname(originalFilename);
+    const pdfFilename = originalFilename.replace(fileExtension, ".pdf");
+
+    // Check if the file extension is supported for conversion
+    if (
+      [".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt"].includes(
+        fileExtension
+      )
+    ) {
+      // Convert the document to PDF
+      await converter.convert(req.file.path, pdfFilename);
+
+      // Send a success response with the PDF filename
+      response.json({ message: "File converted successfully", pdfFilename });
+    } else {
+      // Handle unsupported file types
+      response.status(400).json({ error: "Unsupported file type" });
+    }
+
     // Validation for file type and size already handled by multer
     const newFile = new Upload({
       userFile: request.file.path,
       fileType: request.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
-      fileName,
+      fileName: pdfFilename,
       size: request.file.size,
       subject,
       grade,
