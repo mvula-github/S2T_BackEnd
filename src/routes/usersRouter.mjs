@@ -12,6 +12,7 @@ import {
   ForbiddenError,
 } from "../utils/classes/errors.mjs";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
+import { getAllUsers } from "../handlers/usershandler.mjs";
 
 const app = Router();
 
@@ -19,17 +20,7 @@ app.use(express.json());
 
 //----------------------------------------GET--------------------------------------------
 //to view all users in the database
-app.get("/api/users", requireAuth, async (request, response, next) => {
-  try {
-    if (!requireAuth) throw new UnauthorizedError("User not logged in"); //verify if user is logged in
-
-    const allUsers = await User.find();
-
-    response.status(200).send(allUsers);
-  } catch (err) {
-    next(`${err} `);
-  }
-});
+app.get("/api/users", requireAuth, getAllUsers);
 
 //FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
 //to find users based in a filter query
