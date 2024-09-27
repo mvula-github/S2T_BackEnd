@@ -12,7 +12,7 @@ import {
   ForbiddenError,
 } from "../utils/classes/errors.mjs";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
-import { getAllUsers } from "../handlers/usershandler.mjs";
+import { getAllUsers } from "../controllers/usershandler.mjs";
 
 const app = Router();
 

@@ -40,7 +40,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("*", checkUser);
 
 // Test routes
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.status(403).send({ msg: "Hello World" });
 });
 

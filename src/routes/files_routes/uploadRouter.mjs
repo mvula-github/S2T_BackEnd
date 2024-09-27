@@ -3,8 +3,12 @@ import multer from "multer";
 import path from "path";
 import Upload from "../../mongoose/schemas/upload.mjs"; // Import the upload schema
 import fs from "fs"; // Required for checking file existence
+import { errorFileHandler } from "../../utils/middleware/middleware.mjs";
 
 const router = express.Router();
+
+// Global error handler for file validation errors
+router.use(errorFileHandler);
 
 // Set file size limit to 15MB
 const MAX_FILE_SIZE = 30 * 1024 * 1024; //30mb
@@ -23,7 +27,7 @@ const storage = multer.diskStorage({
 const fileFilter = (request, file, cb) => {
   const allowedFileTypes = [
     "application/pdf",
-    "application/msword",
+    "application/docx",
     "image/jpeg",
     "image/png",
   ];
@@ -128,26 +132,6 @@ router.post(
   }
 );
 
-// Global error handler for file validation errors
-router.use((err, request, response, next) => {
-  if (err instanceof multer.MulterError) {
-    // Multer-specific errors
-    if (err.code === "LIMIT_FILE_SIZE") {
-      return response
-        .status(400)
-        .json({ message: "File is too large. Maximum file size is 15MB." });
-    }
-  } else if (err.message === "Incorrect file type") {
-    return response.status(400).json({
-      message:
-        "Incorrect file type. Allowed types are PDF, DOC, DOCX, JPEG, PNG.",
-    });
-  }
-  return response
-    .status(500)
-    .json({ message: "An error occurred", error: err.message });
-});
-
 router.get("/api/files", async (request, response) => {
   try {
     const allUploads = await Upload.find();
@@ -158,7 +142,7 @@ router.get("/api/files", async (request, response) => {
   }
 });
 
-router.patch("/api/files/approve/:id", async (request, response) => {
+router.patch("/api/files/:id/approve/", async (request, response) => {
   const { id } = request.params;
 
   try {
@@ -192,6 +176,20 @@ router.patch("/api/files/:id/disapprove", async (request, response) => {
     response.status(201).send("File disapproved successlly");
   } catch (err) {
     return response.status(201).send(`${err}`);
+  }
+});
+
+router.delete("/api/files/:id", async (request, response) => {
+  const { id } = request.params;
+
+  try {
+    const file = await Upload.findByIdAndDelete(id);
+
+    if (!file) return response.status(404).send("File not found");
+
+    response.status(201).send("File deleted successlly");
+  } catch (err) {
+    return response.status(500).send(`${err}`);
   }
 });
 
