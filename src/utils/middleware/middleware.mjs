@@ -47,7 +47,7 @@ const checkUser = (request, response, next) => {
         next();
       } else {
         console.log(decodedToken);
-        let user = await User.findByI(decodedToken.id);
+        let user = await User.findById(decodedToken.id);
         response.locals.user = user; // injecting it to views for some get methods
         next();
       }
