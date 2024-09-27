@@ -1,12 +1,12 @@
 import express from "express";
-import { Rating } from "../../mongoose/schemas/ratings.mjs"; // assuming file structure
+import Rating from "../../mongoose/schemas/ratings.mjs"; // assuming file structure
 import { validationResult, checkSchema } from "express-validator"; // for validation if needed
-import { validateFileRating } from "../validators/fileRatingValidator.js";
+import { validateFileRating } from "../../utils/validation/fileRatingValidation.mjs";
 
 const router = express.Router();
 
 router.post(
-  "api/ratings",
+  "/api/ratings",
   checkSchema(validateFileRating),
   async (request, response) => {
     const errors = validationResult(request);
@@ -24,7 +24,7 @@ router.post(
       });
 
       await ratings.save();
-      response.status(201).json(fileRating);
+      response.status(201).json(ratings);
     } catch (error) {
       response.status(500).json({ message: error.message });
     }
@@ -35,7 +35,7 @@ router.post(
 router.get("/api/ratings/:fileId", async (req, res) => {
   const { fileId } = req.params;
   try {
-    const ratings = await FileRating.find({ fileId });
+    const ratings = await Rating.find({ fileId });
     if (!ratings) {
       return res
         .status(404)
@@ -47,7 +47,7 @@ router.get("/api/ratings/:fileId", async (req, res) => {
   }
 });
 
-// PATCH (update) a rating for a specific file by file ID and user ID
+// PATCH (update) a rating for a specific file by file ID and user ID or session/cookie
 router.patch("api/ratings/:fileId", async (req, res) => {
   const { fileId } = req.params;
   const { rating, comment } = req.body;

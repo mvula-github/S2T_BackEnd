@@ -6,6 +6,7 @@ import uploadRouter from "./files_routes/uploadRouter.mjs"; // Import the file u
 import authorRouter from "./oer_routes/authorRouter.mjs";
 import guideRouter from "./oer_routes/guideRouter.mjs";
 import tutorialRouter from "./oer_routes/toturialRoutes.mjs";
+import ratingRouter from "./files_routes/ratingRouter.mjs";
 
 const app = Router();
 const rootRouter = express.Router();
@@ -13,6 +14,7 @@ const rootRouter = express.Router();
 // Include the file upload routes
 //rootRouter.use("/api", uploadRouter); // Your upload route will be `/api/upload`
 //app.use(uploadRouter, authorRouter, guideRouter, tutorialRouter);
-app.use(faqRouter, usersRouter, authRouter, uploadRouter);
+
+app.use(faqRouter, usersRouter, authRouter, uploadRouter, ratingRouter);
 
 export default app;
