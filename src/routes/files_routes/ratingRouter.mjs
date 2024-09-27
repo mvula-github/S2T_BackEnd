@@ -53,7 +53,7 @@ router.patch("api/ratings/:fileId", async (req, res) => {
   const { rating, comment } = req.body;
 
   try {
-    const updatedRating = await FileRating.findOneAndUpdate(
+    const updatedRating = await Rating.findOneAndUpdate(
       { fileId },
       { rating, comment, updatedAt: Date.now() }, // update rating and comment
       { new: true } // return the updated document

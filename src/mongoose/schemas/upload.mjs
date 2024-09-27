@@ -22,10 +22,6 @@ const uploadSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  mimetype: {
-    type: String,
-    required: true,
-  },
   grade: {
     type: String,
     required: true,
@@ -36,6 +32,10 @@ const uploadSchema = new mongoose.Schema({
   dateCreated: {
     type: Date,
     default: Date.now,
+  },
+  approved: {
+    type: Boolean,
+    require: true,
   },
   //add SIZE, PATH, EXTENTION, AUTHOR, TAGS, DESCRIPTION
 });

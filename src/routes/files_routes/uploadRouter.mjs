@@ -45,8 +45,16 @@ router.post(
   "/api/uploads",
   upload.single("file"),
   async (request, response) => {
-    const { fileName, fileType, subject, grade, year, category, description } =
-      request.body;
+    const {
+      fileName,
+      fileType,
+      subject,
+      grade,
+      year,
+      category,
+      description,
+      approved,
+    } = request.body;
 
     // Check for required fields
     if (
@@ -78,13 +86,14 @@ router.post(
     const newFile = new Upload({
       userFile: request.file.path,
       fileType: request.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
-      fileName: request.file.originalname,
+      fileName,
       size: request.file.size,
       subject,
       grade,
       year,
       category,
       description,
+      approved: false,
     });
     if (request.file.path === Upload.findOne(request.file.path))
       return response.status(400).send("File already exits");
@@ -106,7 +115,7 @@ router.use((err, request, response, next) => {
     if (err.code === "LIMIT_FILE_SIZE") {
       return response
         .status(400)
-        .json({ message: "File is too large. Maximum file size is 5MB." });
+        .json({ message: "File is too large. Maximum file size is 15MB." });
     }
   } else if (err.message === "Incorrect file type") {
     return response.status(400).json({
@@ -119,13 +128,50 @@ router.use((err, request, response, next) => {
     .json({ message: "An error occurred", error: err.message });
 });
 
-router.get("/api/uploads", async (request, response) => {
+router.get("/api/files", async (request, response) => {
   try {
     const allUploads = await Upload.find();
 
     response.status(200).send(allUploads);
   } catch (err) {
     response.send(`${err}`);
+  }
+});
+
+router.patch("/api/files/approve/:id", async (request, response) => {
+  const { id } = request.params;
+
+  try {
+    const file = await Upload.findById(id);
+    console.log(id);
+    file.approved = true;
+    console.log(file.approved);
+    file.save();
+
+    if (!file) return response.status(404).send("File not found");
+
+    response.status(201).send("File aprroved successlly");
+  } catch (err) {
+    return response.status(201).send(`${err}`);
+  }
+});
+
+router.patch("/api/files/:id/disapprove", async (request, response) => {
+  const { id } = request.params;
+  const { approved } = request.body;
+
+  try {
+    const file = await Upload.findById(id);
+    console.log(id);
+    file.approved = false;
+    console.log(file.approved);
+    file.save();
+
+    if (!file) return response.status(404).send("File not found");
+
+    response.status(201).send("File disapproved successlly");
+  } catch (err) {
+    return response.status(201).send(`${err}`);
   }
 });
 
