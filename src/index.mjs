@@ -37,7 +37,7 @@ app.use(
 app.use("/uploads", express.static("uploads"));
 
 // User authentication check
-app.use("*", checkUser);
+//app.use("*", checkUser);
 
 // Test routes
 app.get("/api", (req, res) => {
@@ -50,15 +50,6 @@ app.get("/landing", requireAuth, (req, res) => {
 
 // Root route for other routes
 app.use(rootRouter);
-
-// Simple route for testing
-app.get("/", (request, response) => {
-  response.status(403).send({ msg: "Hello World" });
-});
-
-// Starting the express server
-
-//starting the express server
 
 // Start the express server
 const PORT = process.env.PORT || 5000;
