@@ -1,4 +1,4 @@
-import express, { request, response, Router } from "express";
+import express, { Router } from "express";
 import { User } from "../mongoose/schemas/user.mjs";
 import { validationResult, matchedData, checkSchema } from "express-validator";
 import {

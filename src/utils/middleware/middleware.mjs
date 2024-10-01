@@ -8,7 +8,7 @@ const requireAuth = (request, response, next) => {
   const token = request.cookies.jwt;
 
   //check if web token exist
-  if (!token) return response.send("redirect user to login page");
+  if (!token) return response.send("User needs to login");
 
   jwt.verify(token, "secret signature", (err, decodedToken) => {
     if (err) {

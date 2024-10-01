@@ -5,12 +5,7 @@ import { addUserValidation } from "../utils/validation/usersValidation.mjs";
 import jwt from "jsonwebtoken";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
 import sendEmail from "../utils/email.mjs";
-import {
-  NotFoundError,
-  ValidationError,
-  UnauthorizedError,
-  ForbiddenError,
-} from "../utils/classes/errors.mjs";
+import { NotFoundError } from "../utils/classes/errors.mjs";
 
 const app = Router();
 
@@ -103,12 +98,8 @@ app.post("/api/auth/logout", requireAuth, (request, response) => {
 
 //TO CHECK IF USER IS LOG IN STATUS
 app.get("/api/auth/status", requireAuth, (request, response) => {
-  console.log("This is the status endpoint ");
-  console.log(request.user);
-  console.log(request.session);
-
-  return request.user
-    ? response.status(200).send(request.user)
+  return response.locals.user
+    ? response.status(200).send(response.locals.user.id)
     : response.status(401).send(" User Not Authenticated");
 });
 
