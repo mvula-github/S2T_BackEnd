@@ -12,17 +12,16 @@ import reportingRouter from "./files_routes/reportingRouter.mjs";
 const app = Router();
 const rootRouter = express.Router();
 
-// Include the file upload routes
-//rootRouter.use("/api", uploadRouter); // Your upload route will be `/api/upload`
-//app.use(uploadRouter, authorRouter, guideRouter, tutorialRouter);
-
 app.use(
   faqRouter,
   usersRouter,
   authRouter,
   uploadRouter,
   ratingRouter,
-  reportingRouter
+  reportingRouter,
+  authorRouter,
+  guideRouter,
+  tutorialRouter
 );
 
 export default app;
