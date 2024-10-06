@@ -1,7 +1,7 @@
 import express from "express";
 import Rating from "../../mongoose/schemas/ratings.mjs"; // assuming file structure
 import { validationResult, checkSchema } from "express-validator"; // for validation if needed
-import { validateFileRating } from "../../utils/validation/fileRatingValidation.mjs";
+import { validateFileRating } from "../../utils/validation/ratingValidation.mjs";
 
 const router = express.Router();
 

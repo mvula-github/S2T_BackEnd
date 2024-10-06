@@ -14,7 +14,7 @@ const app = Router();
 app.use(express.json());
 
 //----------------------------------------GET--------------------------------------------
-//to view all users in the database
+//TO VIEW ALL USERS IN THE DATABASE
 app.get("/api/users", requireAuth, getAllUsers);
 
 //FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
@@ -25,7 +25,6 @@ app.get("/api/users/:id", requireAuth, getUserById);
 
 //----------------------------------UPDATE--------------------------------------
 
-//WHEN USER OR ADMIN WANTS TO UPDATE CERTAIN
 app.patch(
   "/api/users/:id",
   requireAuth,

@@ -3,6 +3,7 @@ import { requireAuth } from "../utils/middleware/middleware.mjs";
 import { validationResult, matchedData } from "express-validator";
 import { NotFoundError, UnauthorizedError } from "../utils/classes/errors.mjs";
 
+//TO VIEW ALL USERS IN THE DATABASE
 export const getAllUsers = async (request, response, next) => {
   if (!requireAuth) throw new UnauthorizedError("User not logged in"); //verify if user is logged in
 
@@ -15,6 +16,7 @@ export const getAllUsers = async (request, response, next) => {
   }
 };
 
+//TO RETRIEVE A SPECIFIC USER BY ID
 export const getUserById = async (request, response, next) => {
   if (!requireAuth) throw new UnauthorizedError("User not logged in"); //verify if user is logged in
 
@@ -32,6 +34,7 @@ export const getUserById = async (request, response, next) => {
   }
 };
 
+//WHEN ADMIN WANTS TO UPDATE A CERTAIN USER
 export const updateUserById = async (request, response, next) => {
   if (!requireAuth) throw new UnauthorizedError("User not logged in"); //verify if user is logged in
 
@@ -59,6 +62,7 @@ export const updateUserById = async (request, response, next) => {
   }
 };
 
+//WHEN ADMIN WANTS TO REMOVED A USER OR USER DELETES AN ACCOUNT
 export const deleteUserById = async (request, response, next) => {
   try {
     if (!requireAuth) throw new UnauthorizedError("User not logged in"); //verify if user is logged in
