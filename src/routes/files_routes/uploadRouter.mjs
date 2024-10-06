@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import multer from "multer";
 import path from "path";
 import Upload from "../../mongoose/schemas/upload.mjs"; // Import the upload schema
@@ -25,12 +25,7 @@ const storage = multer.diskStorage({
 
 // Multer file filter
 const fileFilter = (request, file, cb) => {
-  const allowedFileTypes = [
-    "application/pdf",
-    "application/docx",
-    "image/jpeg",
-    "image/png",
-  ];
+  const allowedFileTypes = ["application/pdf"];
   if (allowedFileTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
@@ -47,62 +42,51 @@ const upload = multer({
 // POST route for file upload
 router.post(
   "/api/uploads",
-  upload.single("recfile"),
+  upload.single("file"),
   async (request, response) => {
+    const {
+      fileName,
+      fileType,
+      subject,
+      grade,
+      year,
+      category,
+      description,
+      approved,
+    } = request.body;
+
+    // Check for required fields
+    if (
+      !fileName ||
+      !fileType ||
+      !subject ||
+      !grade ||
+      !request.file ||
+      !year ||
+      !description ||
+      !category
+    ) {
+      return response
+        .status(400)
+        .send({ message: "All fields are required, including the file" });
+    }
+
+    // Validation for file type and size already handled by multer
+    const newFile = new Upload({
+      userFile: request.file.path,
+      fileType: request.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
+      fileName,
+      size: request.file.size,
+      subject,
+      grade,
+      year,
+      category,
+      description,
+      approved: false,
+    });
+    if (request.file.path === Upload.findOne(request.file.path))
+      return response.status(400).send("File already exits");
     try {
-      const {
-        fileName,
-        fileType,
-        subject,
-        grade,
-        year,
-        category,
-        description,
-        approved,
-      } = request.body;
-
-      // Check for required fields
-      if (
-        !fileName ||
-        !fileType ||
-        !subject ||
-        !grade ||
-        !request.file ||
-        !year ||
-        !category
-      ) {
-        return response
-          .status(400)
-          .send({ message: "All fields are required, including the file" });
-      }
-
-      // Check if the file already exists in the database
-      const existingFile = await Upload.findOne({
-        fileName: request.file.originalname, // Use the original filename
-        fileType: request.file.mimetype.split("/")[1], // Check by file type
-      });
-
-      if (existingFile) {
-        // If a file with the same name and type exists, send an error response
-        return response.status(400).send({ message: "File already exists" });
-      }
-
-      // Validation for file type and size already handled by multer
-      const newFile = new Upload({
-        userFile: request.file.path,
-        fileType: request.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
-        fileName: pdfFilename,
-        size: request.file.size,
-        subject,
-        grade,
-        year,
-        category,
-        description,
-        approved: false,
-      });
-      if (request.file.path === Upload.findOne(request.file.path))
-        return response.status(400).send("File already exits");
-
       await newFile.save();
       response
         .status(201)
