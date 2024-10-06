@@ -14,6 +14,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cjs-loader": "^0.1.0",
+    "converter": "^0.0.5",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",

@@ -8,6 +8,7 @@ import guideRouter from "./oer_routes/guideRouter.mjs";
 import tutorialRouter from "./oer_routes/toturialRoutes.mjs";
 import ratingRouter from "./files_routes/ratingRouter.mjs";
 import reportingRouter from "./files_routes/reportingRouter.mjs";
+import subjectRouter from "./subjectRouter.mjs";
 
 const app = Router();
 const rootRouter = express.Router();
@@ -21,7 +22,32 @@ app.use(
   reportingRouter,
   authorRouter,
   guideRouter,
-  tutorialRouter
+  tutorialRouter,
+  subjectRouter
 );
 
 export default app;
+
+/*
+
+      const originalFilename = request.file.originalname;
+      const fileExtension = path.extname(originalFilename);
+      const pdfFilename = originalFilename.replace(fileExtension, ".pdf");
+
+      // Check if the file extension is supported for conversion
+      if (
+        [".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt"].includes(
+          fileExtension
+        )
+      ) {
+        // Convert the document to PDF
+        await converter.convert(request.file.path, pdfFilename);
+
+        // Send a success response with the PDF filename
+        response.json({ message: "File converted successfully", pdfFilename });
+      } else {
+        // Handle unsupported file types
+        response.status(400).json({ error: "Unsupported file type" });
+      }
+
+*/

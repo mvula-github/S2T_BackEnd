@@ -37,7 +37,7 @@ app.use(
 app.use("/uploads", express.static("uploads"));
 
 // User authentication check
-app.use("*", checkUser);
+//app.use("*", checkUser);
 
 // Test routes
 app.get("/api", (req, res) => {

@@ -1,15 +1,15 @@
 // file for displaying subjects
 
 import express from "express";
-import Document from "../mongoose/schemas/documents.mjs";
 import path from "path";
+import Upload from "../mongoose/schemas/upload.mjs";
 
 const router = express.Router();
 
 //to fetch all the documents from the database
 router.get("/api/subjects", async (req, res) => {
   try {
-    const documents = await Document.find();
+    const documents = await Upload.find();
     res.json(documents);
     // error handling
   } catch (error) {
@@ -20,7 +20,7 @@ router.get("/api/subjects", async (req, res) => {
 // getting a specific document by ID
 router.get("/api/subjects/:id", async (req, res) => {
   try {
-    const document = await Document.findById(req.params.id);
+    const document = await Upload.findById(req.params.id);
     if (!document)
       return res.status(404).json({ error: "Cannot find document" });
     res.json(document);
@@ -34,12 +34,12 @@ router.get("/api/subjects/:id", async (req, res) => {
 // previewing a document
 router.get("/api/subjects/preview/:id", async (req, res) => {
   try {
-    const document = await Document.findById(req.params.id);
+    const document = await Upload.findById(req.params.id);
     // error handling
     if (!document) return res.status(404).json({ error: "Document not found" });
 
     // send the file url so it can be used in the frontend
-    res.json({ fileUrl: document.fileUrl });
+    res.json({ fileUrl: document.userFile });
     // error handling
   } catch (error) {
     res.status(500).json({ error: "Cannot show document" });
@@ -49,7 +49,7 @@ router.get("/api/subjects/preview/:id", async (req, res) => {
 // downloading a pdf document
 router.get("/api/subjects/download/:id", async (req, res) => {
   try {
-    const document = await Document.findById(req.params.id);
+    const document = await Upload.findById(req.params.id);
     if (!document)
       return res
         .status(404)
@@ -57,6 +57,7 @@ router.get("/api/subjects/download/:id", async (req, res) => {
 
     // declared file path
     const filePath = path.join(path.resolve(), document.fileUrl);
+    console.log(filePath);
 
     //sending the file for download
     res.download(filePath, document.title + "pdf", (err) => {
@@ -82,7 +83,7 @@ router.get("/api/subjects/search", async (req, res) => {
     if (title) filter.title = new RegExp(title, "i");
 
     //for fetching documents based on the filter
-    const documents = await Document.find(filter);
+    const documents = await Upload.find(filter);
     res.json(documents);
   } catch (error) {
     // error handling
