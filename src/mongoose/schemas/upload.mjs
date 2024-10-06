@@ -8,7 +8,7 @@ const uploadSchema = new mongoose.Schema({
   fileType: {
     type: String,
     required: true,
-    enum: ["pdf", "docx"], // Limit allowed file types
+    enum: ["pdf", "msword"], // Limit allowed file types
   },
   fileName: {
     type: String,

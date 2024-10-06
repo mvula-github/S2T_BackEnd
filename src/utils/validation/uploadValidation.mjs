@@ -18,14 +18,14 @@ export const addFileValidation = {
   grade: {
     notEmpty: { errorMessage: "Grade is required" },
     isInt: {
-      option: { min: 1, max: 12 },
+      options: { min: 1, max: 12 },
       errorMessage: "Grade is a number between 1 and 12",
     },
   },
   year: {
     notEmpty: { errorMessage: "Year is required" },
     isInt: {
-      option: { min: 2000, max: new Date().getFullYear() },
+      options: { min: 2000, max: new Date().getFullYear() },
       errorMessage:
         "Year is a 4-digit number between 2000 and the current year",
     },

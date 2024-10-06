@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
 
 // Multer file filter
 const fileFilter = (request, file, cb) => {
-  const allowedFileTypes = ["application/pdf"];
+  const allowedFileTypes = ["application/pdf", "image/gif"];
   if (allowedFileTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
@@ -47,6 +47,11 @@ router.post(
   upload.single("file"),
   checkSchema(addFileValidation),
   async (request, response) => {
+    //handling the validation results if they are present
+    const errors = validationResult(request);
+    if (!errors.isEmpty())
+      return response.status(400).send(errors.array().map((err) => err.msg));
+
     const { fileName, subject, grade, year, category, description } =
       request.body;
 
@@ -89,7 +94,7 @@ router.post(
         .status(201)
         .send({ message: "File uploaded successfully", file: newFile });
     } catch (error) {
-      response.status(500).send({ message: "File upload failed", error });
+      response.status(500).send({ message: "File upload failed" });
     }
   }
 );
