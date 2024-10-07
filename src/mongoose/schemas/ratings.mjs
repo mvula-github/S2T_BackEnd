@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const fileRatingSchema = new mongoose.Schema(
   {
-    file_id: {
+    file_Id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "File", // assuming there is a File schema

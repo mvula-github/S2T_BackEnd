@@ -1,50 +1,58 @@
-import { matchedData, validationResult } from "express-validator"; // for validation if needed
-import Upload from "../mongoose/schemas/upload.mjs";
-import { NotFoundError, UnauthorizedError } from "../utils/classes/errors.mjs";
+// assuming file structure
+import { validationResult } from "express-validator"; // for validation if needed
 import Rating from "../mongoose/schemas/ratings.mjs";
+import Upload from "../mongoose/schemas/upload.mjs";
+import { NotFoundError } from "../utils/classes/errors.mjs";
 
-export const createRating = async (request, response, next) => {
+export const createRating = async (request, response) => {
   const errors = validationResult(request);
-
   if (!errors.isEmpty())
     return response.status(400).send(errors.array().map((err) => err.msg));
 
+  const {
+    body: { fileId, ...body },
+  } = request;
+  //const { _id } = request.params;
+
   try {
-    const { file_id, rating, comment } = request.body;
+    //Check oif the file rated does exist
+    const file = await Upload.findOne({ fileId });
 
-    const file = await Upload.findById(file_id);
-    console.log(file);
+    //assigning file id to be able to store it
+    const file_Id = file.id;
 
-    //if (!file) throw new NotFoundError("file not found");
-    //const data = matchedData(request);
+    //error for when file is not found
+    if (!file) throw new NotFoundError("File not found");
 
-    const ratings = new Rating({ file_id, rating, comment });
+    const ratings = new Rating({ file_Id, ...body });
+
     await ratings.save();
-
-    response.status(201).json(ratings);
+    response
+      .status(201)
+      .json("File rated succesfully, rating: " + ratings.rating);
   } catch (error) {
-    next(`${error} `);
+    response.status(500).json({ message: error.message });
   }
 };
 
-export const viewRatingById = async (request, response) => {
-  const { fileId } = request.params;
+export const viewRatingByFileId = async (req, res) => {
+  const { fileId } = req.params;
   try {
     const ratings = await Rating.find({ fileId });
     if (!ratings) {
-      return response
+      return res
         .status(404)
         .json({ message: "No ratings found for this file" });
     }
-    response.status(200).json(ratings);
+    res.status(200).json(ratings);
   } catch (error) {
-    response.status(500).json({ message: "Error fetching ratings", error });
+    res.status(500).json({ message: "Error fetching ratings", error });
   }
 };
 
-export const updateRatingByRating = async (request, response) => {
-  const { fileId } = request.params;
-  const { rating, comment } = request.body;
+export const updateRatingById = async (req, res) => {
+  const { fileId } = req.params;
+  const { rating, comment } = req.body;
 
   try {
     const updatedRating = await Rating.findOneAndUpdate(
@@ -54,11 +62,11 @@ export const updateRatingByRating = async (request, response) => {
     );
 
     if (!updatedRating) {
-      return response.status(404).json({ message: "Rating not found" });
+      return res.status(404).json({ message: "Rating not found" });
     }
 
-    response.status(200).json(updatedRating);
+    res.status(200).json(updatedRating);
   } catch (error) {
-    response.status(500).json({ message: "Error updating rating", error });
+    res.status(500).json({ message: "Error updating rating", error });
   }
 };
