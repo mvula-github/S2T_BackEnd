@@ -9,22 +9,20 @@ export const createRating = async (request, response) => {
   if (!errors.isEmpty())
     return response.status(400).send(errors.array().map((err) => err.msg));
 
-  const {
-    body: { fileId, ...body },
-  } = request;
-  //const { _id } = request.params;
+  const { rating, comment } = request.body;
+  const file_Id = request.params.file_Id;
 
   try {
+    //console.log(file_Id, rating, comment);
     //Check oif the file rated does exist
-    const file = await Upload.findOne({ fileId });
-
+    const file = await Upload.findById(file_Id);
+    console.log(file);
     //assigning file id to be able to store it
-    const file_Id = file.id;
 
     //error for when file is not found
     if (!file) throw new NotFoundError("File not found");
 
-    const ratings = new Rating({ file_Id, ...body });
+    const ratings = new Rating({ file_Id, rating, comment });
 
     await ratings.save();
     response
@@ -35,24 +33,28 @@ export const createRating = async (request, response) => {
   }
 };
 
-export const viewRatingByFileId = async (req, res) => {
-  const { fileId } = req.params;
+export const viewRatingByFileId = async (request, response) => {
+  const file_Id = request.params.file_Id;
+  console.log(file_Id);
+
   try {
-    const ratings = await Rating.find({ fileId });
-    if (!ratings) {
-      return res
+    const fileRatings = await Rating.find({ file_Id });
+    console.log(fileRatings);
+
+    if (!fileRatings) {
+      return response
         .status(404)
         .json({ message: "No ratings found for this file" });
     }
-    res.status(200).json(ratings);
+    response.status(200).json(fileRatings);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching ratings", error });
+    response.status(500).json({ message: "Error fetching ratings: " + error });
   }
 };
 
-export const updateRatingById = async (req, res) => {
-  const { fileId } = req.params;
-  const { rating, comment } = req.body;
+export const updateRatingById = async (request, response) => {
+  const { fileId } = request.params;
+  const { rating, comment } = request.body;
 
   try {
     const updatedRating = await Rating.findOneAndUpdate(
@@ -62,11 +64,11 @@ export const updateRatingById = async (req, res) => {
     );
 
     if (!updatedRating) {
-      return res.status(404).json({ message: "Rating not found" });
+      return response.status(404).json({ message: "Rating not found" });
     }
 
-    res.status(200).json(updatedRating);
+    response.status(200).json(updatedRating);
   } catch (error) {
-    res.status(500).json({ message: "Error updating rating", error });
+    response.status(500).json({ message: "Error updating rating", error });
   }
 };
