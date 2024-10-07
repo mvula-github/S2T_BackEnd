@@ -10,15 +10,15 @@ export const createRating = async (request, response, next) => {
     return response.status(400).send(errors.array().map((err) => err.msg));
 
   try {
-    const { fileId, rating, comment } = request.body;
+    const { file_id, rating, comment } = request.body;
 
-    const file = await Upload.findById(fileId);
+    const file = await Upload.findById(file_id);
     console.log(file);
 
     //if (!file) throw new NotFoundError("file not found");
     //const data = matchedData(request);
 
-    const ratings = await Rating(fileId, rating, comment);
+    const ratings = new Rating({ file_id, rating, comment });
     await ratings.save();
 
     response.status(201).json(ratings);
