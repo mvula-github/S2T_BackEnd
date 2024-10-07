@@ -4,7 +4,7 @@ import Rating from "../mongoose/schemas/ratings.mjs";
 import Upload from "../mongoose/schemas/upload.mjs";
 import { NotFoundError } from "../utils/classes/errors.mjs";
 
-export const createRating = async (request, response) => {
+export const createRating = async (request, response, next) => {
   const errors = validationResult(request);
   if (!errors.isEmpty())
     return response.status(400).send(errors.array().map((err) => err.msg));
@@ -29,7 +29,7 @@ export const createRating = async (request, response) => {
       .status(201)
       .json("File rated succesfully, rating: " + ratings.rating);
   } catch (error) {
-    response.status(500).json({ message: error.message });
+    next(`${error}`);
   }
 };
 
@@ -39,7 +39,7 @@ export const viewRatingByFileId = async (request, response) => {
 
   try {
     const fileRatings = await Rating.find({ file_Id });
-    console.log(fileRatings);
+    //console.log(fileRatings);
 
     if (!fileRatings) {
       return response
@@ -52,23 +52,24 @@ export const viewRatingByFileId = async (request, response) => {
   }
 };
 
-export const updateRatingById = async (request, response) => {
-  const { fileId } = request.params;
+/*export const updateRatingById = async (request, response) => {
+  const { id } = request.params;
   const { rating, comment } = request.body;
 
   try {
     const updatedRating = await Rating.findOneAndUpdate(
-      { fileId },
+      { id },
       { rating, comment, updatedAt: Date.now() }, // update rating and comment
       { new: true } // return the updated document
     );
 
     if (!updatedRating) {
-      return response.status(404).json({ message: "Rating not found" });
+      throw new NotFoundError("Rating not found");
     }
 
     response.status(200).json(updatedRating);
   } catch (error) {
-    response.status(500).json({ message: "Error updating rating", error });
+    next(`${error}`);
   }
 };
+*/

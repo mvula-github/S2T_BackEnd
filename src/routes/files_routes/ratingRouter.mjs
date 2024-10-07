@@ -16,9 +16,10 @@ router.post(
   createRating
 );
 
-// GET all ratings for a specific file by file ID
+//views all ratings
 router.get("/api/ratings/:file_Id", viewRatingByFileId);
 
+// GET all ratings for a specific file by file ID
 router.get("/api/ratings", async (request, response) => {
   const allRates = await Rating.find();
 
@@ -26,6 +27,10 @@ router.get("/api/ratings", async (request, response) => {
 });
 
 // PATCH (update) a rating for a specific file by file ID and user ID or session/cookie
-router.patch("api/ratings/:fileId", updateRatingById);
+/*router.patch(
+  "api/ratings/:id",
+  checkSchema(validateFileRating),
+  updateRatingById
+);*/
 
 export default router;
