@@ -52,7 +52,7 @@ router.post(
     if (!errors.isEmpty())
       return response.status(400).send(errors.array().map((err) => err.msg));
 
-    const { fileName, subject, grade, year, category, description } =
+    const { fileName, fileType, subject, grade, year, category, description } =
       request.body;
 
     // Check for required fields

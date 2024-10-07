@@ -10,8 +10,6 @@ const fileRatingSchema = new mongoose.Schema(
     rating: {
       type: Number,
       required: true,
-      min: 1,
-      max: 5, // rating should be between 1 and 5
     },
     comment: {
       type: String,
