@@ -3,7 +3,6 @@ import { checkSchema } from "express-validator"; // for validation if needed
 import { validateFileRating } from "../../utils/validation/ratingValidation.mjs";
 import {
   createRating,
-  updateRatingById,
   viewRatingByFileId,
 } from "../../controllers/ratinghander.mjs";
 import Rating from "../../mongoose/schemas/ratings.mjs";
