@@ -70,11 +70,6 @@ router.post(
         fileType: request.file.mimetype.split("/")[1], // Check by file type
       });
 
-      if (existingFile) {
-        // If a file with the same name and type exists, send an error response
-        return response.status(400).send({ message: "File already exists" });
-      }
-
       // Validation for file type and size already handled by multer
       const newFile = new Upload({
         userFile: request.file.path,
@@ -88,6 +83,9 @@ router.post(
         description,
         approved: false,
       });
+
+      if (request.file.path === Upload.findOne(request.file.path))
+        return response.status(400).send("File already exits");
 
       await newFile.save();
 
