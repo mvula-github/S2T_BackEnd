@@ -10,7 +10,7 @@ const app = express();
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/share2teach")
+  .connect(`mongodb://localhost:27017/share2teach`) //`mongodb://${process.env.CONNECTON_STRING}
   .then(() => console.log("Connected to Database"))
   .catch((err) => console.log(`Error: ${err}`));
 
