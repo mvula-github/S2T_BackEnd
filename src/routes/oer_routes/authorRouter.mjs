@@ -3,32 +3,9 @@ import Author from "../../mongoose/schemas/oer.mjs";
 
 const router = Router();
 
-// Get all authors
-router.get("/api/authors", async (req, res) => {
-  try {
-    const authors = await Author.find();
-    res.status(200).json(authors);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching authors", error });
-  }
-});
-
-// Create a new author
-router.post("/api/authors", async (req, res) => {
-  const { name, bioLink } = req.body;
-
-  const newAuthor = new Author({ name, bioLink });
-  try {
-    await newAuthor.save();
-    res.status(201).json(newAuthor);
-  } catch (error) {
-    res.status(400).json({ message: "Error creating author", error });
-  }
-});
-
 //other routes for author will be added here
 // GET all authors
-router.get("/", async (req, res) => {
+router.get("/api/authors", async (req, res) => {
   try {
     const authors = await Author.find();
     res.status(200).json(authors);
@@ -38,7 +15,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET author by ID
-router.get("/:id", async (req, res) => {
+router.get("/api/authors/:id", async (req, res) => {
   try {
     const author = await Author.findById(req.params.id);
     if (!author) return res.status(404).json({ message: "Author not found" });
@@ -49,7 +26,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST new author
-router.post("/", async (req, res) => {
+router.post("/api/authors", async (req, res) => {
   const author = new Author(req.body);
   try {
     const newAuthor = await author.save();
@@ -60,7 +37,7 @@ router.post("/", async (req, res) => {
 });
 
 // PATCH author by ID
-router.patch("/:id", async (req, res) => {
+router.patch("/api/authors/:id", async (req, res) => {
   try {
     const author = await Author.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -73,7 +50,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 // DELETE author by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/api/authors/:id", async (req, res) => {
   try {
     const author = await Author.findByIdAndDelete(req.params.id);
     if (!author) return res.status(404).json({ message: "Author not found" });

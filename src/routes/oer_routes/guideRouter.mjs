@@ -3,32 +3,9 @@ import Guide from "../../mongoose/schemas/oer.mjs";
 
 const router = Router();
 
-// Get all guides
-router.get("/api/guides", async (req, res) => {
-  try {
-    const guides = await Guide.find();
-    res.status(200).json(guides);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching guides", error });
-  }
-});
-
-// Create a new guide
-router.post("/api/guides", async (req, res) => {
-  const { title, description, link } = req.body;
-
-  const newGuide = new Guide({ title, description, link });
-  try {
-    await newGuide.save();
-    res.status(201).json(newGuide);
-  } catch (error) {
-    res.status(400).json({ message: "Error creating guide", error });
-  }
-});
-
 //other routes for guides will be added here
 // GET all guides
-router.get("/", async (req, res) => {
+router.get("/api/guides", async (req, res) => {
   try {
     const guides = await Guide.find();
     res.status(200).json(guides);
@@ -38,7 +15,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET guide by ID
-router.get("/:id", async (req, res) => {
+router.get("/api/guides/:id", async (req, res) => {
   try {
     const guide = await Guide.findById(req.params.id);
     if (!guide) return res.status(404).json({ message: "Guide not found" });
@@ -49,7 +26,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST new guide
-router.post("/", async (req, res) => {
+router.post("/api/guides", async (req, res) => {
   const guide = new Guide(req.body);
   try {
     const newGuide = await guide.save();
@@ -60,7 +37,7 @@ router.post("/", async (req, res) => {
 });
 
 // PATCH guide by ID
-router.patch("/:id", async (req, res) => {
+router.patch("/api/guides/:id", async (req, res) => {
   try {
     const guide = await Guide.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -73,7 +50,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 // DELETE guide by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/api/guides/:id", async (req, res) => {
   try {
     const guide = await Guide.findByIdAndDelete(req.params.id);
     if (!guide) return res.status(404).json({ message: "Guide not found" });

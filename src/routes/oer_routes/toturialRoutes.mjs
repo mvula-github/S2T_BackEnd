@@ -1,10 +1,32 @@
 // tutorialRoutes.mjs
 import express, { Router } from "express";
-import multer from "multer";
 import { body, validationResult } from "express-validator";
 import Tutorial from "../../mongoose/schemas/oer.mjs"; // Adjust the path as necessary
 
 const router = Router();
+
+// Other routes (GET, etc.) can be added here
+// GET all tutorials
+router.get("/api/tutorials", async (req, res) => {
+  try {
+    const tutorials = await Tutorial.find();
+    res.status(200).json(tutorials);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET a tutorial by ID
+router.get("/api/tutorials/:id", async (req, res) => {
+  try {
+    const tutorial = await Tutorial.findById(req.params.id);
+    if (!tutorial)
+      return res.status(404).json({ message: "Tutorial not found" });
+    res.status(200).json(tutorial);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Create a new tutorial
 router.post(
@@ -31,42 +53,8 @@ router.post(
   }
 );
 
-// Other routes (GET, etc.) can be added here
-// GET all tutorials
-router.get("/", async (req, res) => {
-  try {
-    const tutorials = await Tutorial.find();
-    res.status(200).json(tutorials);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// GET a tutorial by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const tutorial = await Tutorial.findById(req.params.id);
-    if (!tutorial)
-      return res.status(404).json({ message: "Tutorial not found" });
-    res.status(200).json(tutorial);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// POST a new tutorial
-router.post("/", async (req, res) => {
-  const tutorial = new Tutorial(req.body);
-  try {
-    const newTutorial = await tutorial.save();
-    res.status(201).json(newTutorial);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
 // PATCH (update) a tutorial by ID
-router.patch("/:id", async (req, res) => {
+router.patch("/api/tutorials/:id", async (req, res) => {
   try {
     const tutorial = await Tutorial.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -80,7 +68,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 // DELETE a tutorial by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/api/tutorials/:id", async (req, res) => {
   try {
     const tutorial = await Tutorial.findByIdAndDelete(req.params.id);
     if (!tutorial)
