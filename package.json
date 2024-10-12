@@ -29,6 +29,8 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "underscore": "^1.13.7",
+    "underscore.string": "^3.3.6",
+    "xml2js": "^0.6.2",
     "xmldom": "^0.6.0"
   },
   "devDependencies": {
