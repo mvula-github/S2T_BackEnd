@@ -27,12 +27,14 @@
     "nodemailer": "^6.9.15",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "underscore": "^1.13.7",
+    "xmldom": "^0.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/node": "^7.25.0",
-    "@babel/preset-env": "^7.25.4",
+    "@babel/core": "^7.25.8",
+    "@babel/node": "^7.25.7",
+    "@babel/preset-env": "^7.25.8",
     "@types/jest": "^29.5.13",
     "jest": "^29.7.0",
     "nodemon": "^3.1.4"
