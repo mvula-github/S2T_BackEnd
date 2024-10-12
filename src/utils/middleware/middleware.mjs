@@ -3,7 +3,6 @@ import { User } from "../../mongoose/schemas/user.mjs";
 import multer from "multer";
 
 //AUTHENTICATION OF jwt
-
 const requireAuth = (request, response, next) => {
   const token = request.cookies.jwt;
 
