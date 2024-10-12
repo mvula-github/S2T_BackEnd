@@ -52,6 +52,11 @@ export const viewRatingByFileId = async (request, response) => {
   }
 };
 
+export const getAllRating = async (request, response) => {
+  const allRates = await Rating.find();
+  response.send(allRates);
+};
+
 /*export const updateRatingById = async (request, response) => {
   const { id } = request.params;
   const { rating, comment } = request.body;

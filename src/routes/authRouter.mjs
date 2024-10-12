@@ -7,6 +7,7 @@ import {
   userLogin,
   userLogout,
   userSignUp,
+  userStatus,
 } from "../controllers/authController.mjs";
 
 const app = Router();
@@ -33,12 +34,9 @@ app.post("/api/auth/login", userLogin);
 app.post("/api/auth/logout", requireAuth, userLogout);
 
 //TO CHECK IF USER IS LOG IN STATUS
-app.get("/api/auth/status", requireAuth, (request, response) => {
-  return response.locals.user
-    ? response.status(200).send(response.locals.user.id)
-    : response.status(401).send(" User Not Authenticated");
-});
+app.get("/api/auth/status", requireAuth, userStatus);
 
+//for varification when euser forgot password
 app.post("/api/auth/forgotPassword", userForgotPassword);
 
 app.patch(

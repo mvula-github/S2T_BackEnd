@@ -23,7 +23,7 @@ app.get("/api/users", requireAuth, getAllUsers);
 //TO RETRIEVE A SPECIFIC USER BY ID
 app.get("/api/users/:id", requireAuth, getUserById);
 
-//----------------------------------UPDATE--------------------------------------
+//----------------------------------UPDATE----------------------------------------------
 
 app.patch(
   "/api/users/:id",

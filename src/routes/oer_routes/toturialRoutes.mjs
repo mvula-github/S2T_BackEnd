@@ -1,7 +1,7 @@
 // tutorialRoutes.mjs
-import express, { Router } from "express";
+import { Router } from "express";
 import { body, validationResult } from "express-validator";
-import Tutorial from "../../mongoose/schemas/oer.mjs"; // Adjust the path as necessary
+import { Tutorial } from "../../mongoose/schemas/oer.mjs"; // Adjust the path as necessary
 
 const router = Router();
 

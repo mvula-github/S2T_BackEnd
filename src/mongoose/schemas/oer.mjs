@@ -7,7 +7,7 @@ const authorSchema = new mongoose.Schema({
 });
 
 // Create the Author model
-const Author = mongoose.model("Author", authorSchema);
+export const Author = mongoose.model("Author", authorSchema);
 
 // Define the guide schema
 const guideSchema = new mongoose.Schema({
@@ -17,7 +17,7 @@ const guideSchema = new mongoose.Schema({
 });
 
 // Create the Guide model
-const Guide = mongoose.model("Guide", guideSchema);
+export const Guide = mongoose.model("Guide", guideSchema);
 
 const tutorialSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -25,7 +25,4 @@ const tutorialSchema = new mongoose.Schema({
 });
 
 // Create the Tutorial model
-const Tutorial = mongoose.model("Tutorial", tutorialSchema);
-
-// Export the oer models
-export default { Author, Guide, Tutorial };
+export const Tutorial = mongoose.model("Tutorial", tutorialSchema);

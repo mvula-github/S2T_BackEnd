@@ -6,6 +6,7 @@ import fs from "fs"; // Required for checking file existence
 import { errorFileHandler } from "../../utils/middleware/middleware.mjs";
 import { addFileValidation } from "../../utils/validation/uploadValidation.mjs";
 import { validationResult, matchedData, checkSchema } from "express-validator";
+import { getAllFiles } from "../../controllers/uploadController.mjs";
 
 const router = express.Router();
 
@@ -99,15 +100,7 @@ router.post(
   }
 );
 
-router.get("/api/files", async (request, response) => {
-  try {
-    const allUploads = await Upload.find();
-
-    response.status(200).send(allUploads);
-  } catch (err) {
-    response.send(`${err}`);
-  }
-});
+router.get("/api/files", getAllFiles);
 
 router.patch("/api/files/:id/approve/", async (request, response) => {
   const { id } = request.params;

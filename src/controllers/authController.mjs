@@ -115,3 +115,9 @@ export const userForgotPassword = async (request, response, next) => {
     next(`${err}`);
   }
 };
+
+export const userStatus = (request, response) => {
+  return response.locals.user
+    ? response.status(200).send(response.locals.user.id)
+    : response.status(401).send(" User Not Authenticated");
+};

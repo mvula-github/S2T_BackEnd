@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import Guide from "../../mongoose/schemas/oer.mjs";
+import { Guide } from "../../mongoose/schemas/oer.mjs";
 
 const router = Router();
 
