@@ -5,14 +5,18 @@ import { NotFoundError, UnauthorizedError } from "../utils/classes/errors.mjs";
 
 //TO VIEW ALL USERS IN THE DATABASE
 export const getAllUsers = async (request, response, next) => {
-  if (!requireAuth) throw new UnauthorizedError("User not logged in"); //verify if user is logged in
+  //if (!requireAuth) throw new UnauthorizedError("User not logged in"); //verify if user is logged in
 
   try {
     const allUsers = await User.find();
 
+    if (!allUsers || allUsers.length === 0)
+      throw new NotFoundError("No users are found");
+
     return response.status(200).send(allUsers);
+    next();
   } catch (err) {
-    next(`${err} `);
+    return response.status(404).send(err);
   }
 };
 
@@ -26,11 +30,12 @@ export const getUserById = async (request, response, next) => {
 
   try {
     const theUser = await User.findById(id);
-    if (!theUser) throw new NotFoundError("User not found");
+    if (!theUser) throw new NotFoundError("User not found in database");
 
     response.status(200).send(theUser);
+    next();
   } catch (err) {
-    next(`${err} `);
+    return response.status(404).send(`${err} `);
   }
 };
 

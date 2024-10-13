@@ -15,13 +15,13 @@ app.use(express.json());
 
 //----------------------------------------GET--------------------------------------------
 //TO VIEW ALL USERS IN THE DATABASE
-app.get("/api/users", requireAuth, getAllUsers);
+app.get("/api/users", getAllUsers); //, requireAuth
 
 //FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
 //to find users based in a filter query
 
 //TO RETRIEVE A SPECIFIC USER BY ID
-app.get("/api/users/:id", requireAuth, getUserById);
+app.get("/api/users/:id", requireAuth, getUserById); //
 
 //----------------------------------UPDATE----------------------------------------------
 
