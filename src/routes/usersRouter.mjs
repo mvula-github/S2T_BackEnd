@@ -15,7 +15,7 @@ app.use(express.json());
 
 //----------------------------------------GET--------------------------------------------
 //TO VIEW ALL USERS IN THE DATABASE
-app.get("/api/users", getAllUsers); //, requireAuth
+app.get("/api/users", requireAuth, getAllUsers);
 
 //FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
 //to find users based in a filter query
