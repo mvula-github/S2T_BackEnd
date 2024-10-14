@@ -3,7 +3,7 @@ version: "1"
 services:
   mongo_db:
     container_name: database_container
-    image: mongo_latest
+    image: mongo:latest
     restart: always
     volumes:
       - mongo_db:/data/db
