@@ -80,6 +80,7 @@ describe("gets user by their id", () => {
     // Mock Express request and response objects
     mockRequest = {
       params: { id: "507f191e810c19729de860ea" }, // Example MongoDB ObjectID
+      body: { rating: 5 },
     };
 
     mockResponse = {
