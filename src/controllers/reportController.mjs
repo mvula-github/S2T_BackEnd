@@ -1,21 +1,22 @@
+import { clearScreenDown } from "readline";
 import Report from "../mongoose/schemas/report.mjs"; // You would need to create a Report schema
 
 export const createReport = async (request, response) => {
-  const { fileId, reason } = request.body;
-
-  if (!fileId || !reason) {
-    return response
-      .status(400)
-      .json({ message: "Please select file and provide reason are required" });
-  }
+  const { fileId } = request.params;
+  const { reason } = request.body;
 
   try {
+    if (!fileId || !reason)
+      return response.status(400).send({
+        message: "Please select file and provide reason are required",
+      });
+
     const newReport = new Report({ fileId, reason });
     await newReport.save();
 
-    response.status(201).json({ message: "Report submitted successfully" });
+    response.status(201).send({ message: "Report submitted successfully" });
   } catch (error) {
-    response.status(500).json({ message: "Error submitting report", error });
+    response.status(500).send({ message: "Error submitting report", error });
   }
 };
 
@@ -23,19 +24,19 @@ export const getReportsById = async (request, response) => {
   const { fileId } = request.params;
 
   try {
-    const reports = await Report.findOne({ fileId });
+    const reports = await Report.find({ fileId });
 
     //console.log(reports);
 
-    if (!reports) {
+    if (!reports || reports.length === 0) {
       return response
         .status(404)
-        .json({ message: "No reports found for this file" });
+        .send({ message: "No reports found for this file" });
     }
 
-    response.status(200).json(reports);
+    return response.status(200).send(reports);
   } catch (error) {
-    response.status(500).json({ message: "Error fetching reports", error });
+    return response.status(500).send({ message: "Error fetching reports" });
   }
 };
 

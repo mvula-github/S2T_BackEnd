@@ -15,7 +15,6 @@ jest.mock("express-validator", () => ({
   matchedData: jest.fn(),
 }));
 
-const mockRequest = {};
 const mockResponse = {
   sendStatus: jest.fn(),
   send: jest.fn(),

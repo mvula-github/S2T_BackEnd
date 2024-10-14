@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  createReport,
   getAllReports,
   getReportsById,
 } from "../../controllers/reportController.mjs";
@@ -7,7 +8,7 @@ import {
 const router = express.Router();
 
 // POST route for submitting a file report
-router.post("/api/reports");
+router.post("/api/reports/:fileId", createReport);
 
 router.get("/api/reports/:fileId", getReportsById);
 
