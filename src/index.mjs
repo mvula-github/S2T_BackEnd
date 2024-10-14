@@ -4,13 +4,14 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import mongoose from "mongoose";
 import { checkUser, requireAuth } from "./utils/middleware/middleware.mjs";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Initialize the express app
 const app = express();
-
 // Connect to MongoDB
 mongoose
-  .connect(`mongodb://localhost:27017/share2teach`) //`mongodb://${process.env.CONNECTON_STRING}
+  .connect(`${process.env.CONNECTION_STRING}`) //`mongodb://${process.env.CONNECTON_STRING}
   .then(() => console.log("Connected to Database"))
   .catch((err) => console.log(`Error: ${err}`));
 
@@ -52,7 +53,7 @@ app.get("/landing", requireAuth, (req, res) => {
 app.use(rootRouter);
 
 // Start the express server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT; //process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Running on Port ${PORT}`);
 });

@@ -27,16 +27,16 @@ UserSchema.pre("save", async function (next) {
 
 UserSchema.statics.signup = async function (email, data) {
   const user = await this.findOne({ email }); //find user in the database
-  //To check if user already exists
-  if (user) throw new ValidationError("Email already exists");
+
+  if (user) throw new ValidationError("Provided email already exists");
 
   const newUser = this(data);
   await newUser.save();
-
   return newUser;
 };
 
 UserSchema.statics.login = async function (email, password) {
+  console.log(email);
   const user = await this.findOne({ email }); //find user in the database
 
   if (!user) throw new NotFoundError("Provided email not found");

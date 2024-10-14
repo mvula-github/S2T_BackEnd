@@ -2,7 +2,7 @@ import { validationResult, matchedData } from "express-validator";
 import jwt from "jsonwebtoken";
 import { User } from "../mongoose/schemas/user.mjs";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
-import { NotFoundError } from "../utils/classes/errors.mjs";
+import { NotFoundError, ValidationError } from "../utils/classes/errors.mjs";
 import sendEmail from "../utils/email.mjs";
 
 //creating the jwt token
@@ -19,7 +19,7 @@ export const userSignUp = async (request, response) => {
   if (!errors.isEmpty())
     return response.status(400).send(errors.array().map((err) => err.msg));
 
-  const { password, cPassword, email } = request;
+  const { password, cPassword, email } = request.body;
 
   //verifying if confirmation password matches password
   if (cPassword !== password)
@@ -33,16 +33,17 @@ export const userSignUp = async (request, response) => {
   try {
     //saving user to database
     const savedUser = await User.signup(email, data);
+
     //creating jwt token and cookie
     const token = createToken(savedUser._id);
+
     response.cookie("jwt", token, {
       httpOnly: true,
       maxAge: maxDuration * 1000,
     });
     return response.status(201).send(`Account created succesfully`);
   } catch (err) {
-    console.log(err);
-    return response.status(400).send(`${err}`);
+    response.status(400).send(`${err}`);
   }
 };
 
