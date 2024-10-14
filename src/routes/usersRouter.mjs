@@ -9,23 +9,23 @@ import {
   updateUserById,
 } from "../controllers/usershandler.mjs";
 
-const app = Router();
+const router = Router();
 
-app.use(express.json());
+router.use(express.json());
 
 //----------------------------------------GET--------------------------------------------
 //TO VIEW ALL USERS IN THE DATABASE
-app.get("/api/users", requireAuth, getAllUsers);
+router.get("/api/users", requireAuth, getAllUsers);
 
 //FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
 //to find users based in a filter query
 
 //TO RETRIEVE A SPECIFIC USER BY ID
-app.get("/api/users/:id", requireAuth, getUserById); //
+router.get("/api/users/:id", requireAuth, getUserById); //
 
 //----------------------------------UPDATE----------------------------------------------
 
-app.patch(
+router.patch(
   "/api/users/:id",
   requireAuth,
   checkSchema(updateUserValidation),
@@ -34,6 +34,6 @@ app.patch(
 
 //-------------------------------------------DELETE--------------------------------------------
 
-app.delete("/api/users/:id", requireAuth, deleteUserById);
+router.delete("/api/users/:id", requireAuth, deleteUserById);
 
-export default app;
+export default router;

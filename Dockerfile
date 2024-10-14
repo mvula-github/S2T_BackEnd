@@ -2,7 +2,7 @@
 FROM node:20
 
 #Working Dir
-WORKDIR /usr/src/
+WORKDIR /usr/src/app
 
 #Copy Package Json FIle
 COPY package*.json ./

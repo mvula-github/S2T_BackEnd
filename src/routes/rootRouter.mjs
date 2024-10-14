@@ -10,10 +10,9 @@ import ratingRouter from "./files_routes/ratingRouter.mjs";
 import reportingRouter from "./files_routes/reportingRouter.mjs";
 import subjectRouter from "./subjectRouter.mjs";
 
-const app = Router();
-const rootRouter = express.Router();
+const router = Router();
 
-app.use(
+router.use(
   faqRouter,
   usersRouter,
   authRouter,
@@ -26,7 +25,7 @@ app.use(
   subjectRouter
 );
 
-export default app;
+export default router;
 
 /*
 

@@ -10,38 +10,38 @@ import {
   userStatus,
 } from "../controllers/authController.mjs";
 
-const app = Router();
+const router = Router();
 
-app.use(express.json());
+router.use(express.json());
 
 //To Display to signup page
-app.get("/api/auth/signup", (request, response) => {
+router.get("/api/auth/signup", (request, response) => {
   response.render("SignUp Page");
 });
 
 //To display the Log in page
-app.get("api/auth/login", (request, response) => {
+router.get("api/auth/login", (request, response) => {
   response.render("Log In");
 });
 
 //FOR WHEN USERS CREATE A NEW ACCOUNT
-app.post("/api/auth/signup", checkSchema(addUserValidation), userSignUp);
+router.post("/api/auth/signup", checkSchema(addUserValidation), userSignUp);
 
 //USER LOGIN REQUEST
-app.post("/api/auth/login", userLogin);
+router.post("/api/auth/login", userLogin);
 
 //USER LOGOUT REQUEST
-app.post("/api/auth/logout", requireAuth, userLogout);
+router.post("/api/auth/logout", requireAuth, userLogout);
 
 //TO CHECK IF USER IS LOG IN STATUS
-app.get("/api/auth/status", requireAuth, userStatus);
+router.get("/api/auth/status", requireAuth, userStatus);
 
 //for varification when euser forgot password
-app.post("/api/auth/forgotPassword", userForgotPassword);
+router.post("/api/auth/forgotPassword", userForgotPassword);
 
-app.patch(
+router.patch(
   "/api/auth/resetPassword/:token",
   async (request, response, next) => {}
 );
 
-export default app;
+export default router;

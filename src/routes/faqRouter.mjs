@@ -12,23 +12,23 @@ import {
   viewFAQbyId,
 } from "../controllers/faqhandler.mjs";
 
-const app = Router();
+const router = Router();
 
 //---------------------------------------------POST------------------------------------------------------
-app.post("/api/faqs", checkSchema(mainFAQvalidation), addFAQ);
+router.post("/api/faqs", checkSchema(mainFAQvalidation), addFAQ);
 
 //---------------------------------------------GET------------------------------------------------------
 
-app.get("/api/faqs", viewAllFAQs);
+router.get("/api/faqs", viewAllFAQs);
 
 //display only one FAQ Q/A specified by the id
-app.get("/api/faqs/:id", viewFAQbyId);
+router.get("/api/faqs/:id", viewFAQbyId);
 
 //---------------------------------------------PATCH------------------------------------------------------
 //to update the category, question, or answer for the faq page
-app.patch("/api/faqs/:id", checkSchema(patchFAQvalidation), updateFAQ);
+router.patch("/api/faqs/:id", checkSchema(patchFAQvalidation), updateFAQ);
 
 //---------------------------------------------DELETE------------------------------------------------------
-app.delete("/api/faqs/:id", deleteFAQ);
+router.delete("/api/faqs/:id", deleteFAQ);
 
-export default app;
+export default router;
