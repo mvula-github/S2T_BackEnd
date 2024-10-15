@@ -19,6 +19,7 @@ export const addUserValidation = {
   },
   email: {
     isEmail: { errorMessage: "Please provide a valid email address" },
+    trim: true, // Removes leading and trailing spaces
     normalizeEmail: true,
     isLength: {
       options: {

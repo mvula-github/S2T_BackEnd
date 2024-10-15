@@ -43,7 +43,7 @@ export const userSignUp = async (request, response) => {
     });
     return response.status(201).send(`Account created succesfully`);
   } catch (err) {
-    response.status(400).send(`${err}`);
+    response.status(500).send(`${err}`);
   }
 };
 
@@ -73,7 +73,7 @@ export const userLogout = (request, response) => {
   if (!requireAuth) return response.status(401).send("User did not log in");
 
   response.cookie("jwt", "", { maxAge: 1 });
-  response.send("User logged out");
+  response.status(200).send("User logged out");
 };
 
 export const userForgotPassword = async (request, response, next) => {

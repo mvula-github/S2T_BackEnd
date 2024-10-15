@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
-describe("testing my home page", () => {
+describe("Create a user account and login", () => {
   let app;
 
   beforeAll(() => {
@@ -16,8 +16,22 @@ describe("testing my home page", () => {
     app = createApp();
   });
 
-  it("should display hello world", async () => {
-    const response = await request(app).get("/");
+  it("should create a new user", async () => {
+    const response = await request(app).post("/api/auth/signup").send({
+      fName: "cole",
+      lName: "palmer",
+      email: "coldpalmer@gmail.com",
+      password: "jcole@12345",
+      cPassword: "jcole@12345",
+    });
+    expect(response.status).toBe(201);
+  });
+
+  it("should login a valid user", async () => {
+    const response = await request(app).post("/api/auth/login").send({
+      email: "coldpalmer@gmail.com",
+      password: "jcole@12345",
+    });
     expect(response.status).toBe(200);
   });
 
