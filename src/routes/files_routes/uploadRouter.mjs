@@ -96,17 +96,24 @@ router.post(
     if (!errors.isEmpty())
       return response.status(400).send(errors.array().map((err) => err.msg));
 
-    const { fileName, fileType, subject, grade, year, category, description } =
-      request.body;
-
-    // Check for required fields
-    if (!request.file) {
-      return response
-        .status(400)
-        .send({ message: "File upload is required. Please select a file" });
-    }
-
     try {
+      const {
+        fileName,
+        fileType,
+        subject,
+        grade,
+        year,
+        category,
+        description,
+      } = request.body;
+
+      // Check for required fields
+      if (!request.file) {
+        return response
+          .status(400)
+          .send({ message: "File upload is required. Please select a file" });
+      }
+
       // Generate file hash to check uniqueness
       const filePath = request.file.path;
       const fileHash = await generateFileHash(filePath);
@@ -133,11 +140,11 @@ router.post(
         )
       );
 
-      if (fileExistsInFolder) {
-        return response
-          .status(400)
-          .send({ message: "A file with this name already exists in storage" });
-      }
+      // if (fileExistsInFolder) {
+      //   return response
+      //     .status(400)
+      //     .send({ message: "A file with this name already exists in storage" });
+      // }
 
       // Create a new upload document in MongoDB
       const newFile = new Upload({
