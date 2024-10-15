@@ -3,6 +3,8 @@ import multer from "multer";
 import path from "path";
 import Upload from "../../mongoose/schemas/upload.mjs"; // Import the upload schema
 import fs from "fs"; // Required for checking file existence
+import crypto from "crypto"; // For generating file hashes
+import officeToPdf from "office-to-pdf"; // For converting to PDF
 import { errorFileHandler } from "../../utils/middleware/middleware.mjs";
 import { addFileValidation } from "../../utils/validation/uploadValidation.mjs";
 import { validationResult, checkSchema } from "express-validator";
@@ -33,7 +35,12 @@ const storage = multer.diskStorage({
 
 // Multer file filter
 const fileFilter = (request, file, cb) => {
-  const allowedFileTypes = ["application/pdf", "image/gif"];
+  const allowedFileTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  ];
   if (allowedFileTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
@@ -47,22 +54,34 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-// Convert the uploaded file to PDF
+// Helper function to generate a file hash
+const generateFileHash = (filePath) => {
+  return new Promise((resolve, reject) => {
+    const hash = crypto.createHash("md5");
+    const stream = fs.createReadStream(filePath);
+
+    stream.on("data", (data) => hash.update(data));
+    stream.on("end", () => resolve(hash.digest("hex")));
+    stream.on("error", (err) => reject(err));
+  });
+};
+
+// Convert uploaded Office file to PDF
 const convertToPDF = async (filePath) => {
   const fileExtension = path.extname(filePath).toLowerCase();
 
-  if (fileExtension === ".pptx") {
-    const pdfBuffer = await officeToPdf(fs.readFileSync(filePath));
-    return pdfBuffer;
-  } else if (fileExtension === ".docx") {
-    const result = await officeToPdf(fs.readFileSync(filePath));
-    return result;
-  } else if (fileExtension === ".xlsx") {
-    const pdfBuffer = await officeToPdf(fs.readFileSync(filePath));
-    return pdfBuffer;
-  } else {
-    throw new Error("Unsupported file type for conversion.");
+  // Check if the file is already a PDF
+  if (fileExtension === ".pdf") {
+    return null; // No conversion needed
   }
+
+  const pdfBuffer = await officeToPdf(fs.readFileSync(filePath));
+  const newFilePath = filePath.replace(fileExtension, ".pdf"); // Replace extension with .pdf
+
+  // Save the converted PDF file
+  fs.writeFileSync(newFilePath, pdfBuffer);
+
+  return newFilePath; // Return the path of the converted file
 };
 
 // POST route for file upload
@@ -72,6 +91,7 @@ router.post(
   checkSchema(addFileValidation),
   async (request, response) => {
     //handling the validation results if they are present
+
     const errors = validationResult(request);
     if (!errors.isEmpty())
       return response.status(400).send(errors.array().map((err) => err.msg));
@@ -87,17 +107,44 @@ router.post(
     }
 
     try {
-      // Check if the file already exists in the database
-      const existingFile = await Upload.findOne({
-        fileName: request.file.originalname, // Use the original filename
-        fileType: request.file.mimetype.split("/")[1], // Check by file type
-      });
+      // Generate file hash to check uniqueness
+      const filePath = request.file.path;
+      const fileHash = await generateFileHash(filePath);
 
-      // Validation for file type and size already handled by multer
+      // Check if the file already exists in the database
+      const existingFile = await Upload.findOne({ fileHash });
+      if (existingFile) {
+        // File already exists
+        return response
+          .status(400)
+          .send({ message: "This file has already been uploaded" });
+      }
+
+      // Convert the file to PDF if necessary
+      const convertedFilePath = await convertToPDF(filePath);
+      const finalFilePath = convertedFilePath || filePath; // Use the converted file path if conversion happened
+
+      // Check if a file with the same name already exists in the storage folder
+      const finalFileName = path.basename(finalFilePath);
+      const fileExistsInFolder = fs.existsSync(
+        path.join(
+          "C:\\Users\\user\\Desktop\\Backend\\src\\uploads",
+          finalFileName
+        )
+      );
+
+      if (fileExistsInFolder) {
+        return response
+          .status(400)
+          .send({ message: "A file with this name already exists in storage" });
+      }
+
+      // Create a new upload document in MongoDB
       const newFile = new Upload({
-        userFile: request.file.path,
-        fileType: request.file.mimetype.split("/")[1], // Extract the extension (e.g., pdf)
-        fileName,
+        userFile: finalFilePath,
+        fileHash, // Save the hash in the database for future checks
+        fileType: "pdf", // Since all files are converted to PDcccF
+        fileName: request.file.originalname, // Use the original filename
         size: request.file.size,
         subject,
         grade,
@@ -107,16 +154,16 @@ router.post(
         approved: false,
       });
 
-      if (request.file.path === Upload.findOne(request.file.path))
-        return response.status(400).send("File already exits");
-
       await newFile.save();
 
       response
         .status(201)
         .send({ message: "File uploaded successfully", file: newFile });
     } catch (error) {
-      response.status(500).send({ message: "File upload failed" });
+      response.status(500).send({
+        message: `File upload failed 
+         ${error}`,
+      });
     }
   }
 );

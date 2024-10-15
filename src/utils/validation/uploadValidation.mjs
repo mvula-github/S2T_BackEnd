@@ -1,12 +1,12 @@
 export const addFileValidation = {
-  fileName: {
-    notEmpty: { errorMessage: "File name is required" },
-    isLength: {
-      options: { min: 5, max: 50 },
-      errorMessage: "File name must be bewteeen 5 and 50 characters",
-    },
-    trim: true,
-  },
+  // fileName: {
+  //   notEmpty: { errorMessage: "File name is required" },
+  //   isLength: {
+  //     options: { min: 5, max: 50 },
+  //     errorMessage: "File name must be bewteeen 5 and 50 characters",
+  //   },
+  //   trim: true,
+  // },
   subject: {
     notEmpty: { errorMessage: "Subject name is required" },
     isLength: {
