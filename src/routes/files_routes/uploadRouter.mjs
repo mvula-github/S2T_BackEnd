@@ -19,7 +19,7 @@ const router = express.Router();
 router.use(errorFileHandler);
 
 // Set file size limit to 15MB
-const MAX_FILE_SIZE = 30 * 1024 * 1024; //30mb
+const MAX_FILE_SIZE = 100 * 1024 * 1024; //100mb
 
 // Multer storage configuration
 const storage = multer.diskStorage({
@@ -46,6 +46,24 @@ const upload = multer({
   limits: { fileSize: MAX_FILE_SIZE }, // File size limit
   fileFilter: fileFilter,
 });
+
+// Convert the uploaded file to PDF
+const convertToPDF = async (filePath) => {
+  const fileExtension = path.extname(filePath).toLowerCase();
+
+  if (fileExtension === ".pptx") {
+    const pdfBuffer = await officeToPdf(fs.readFileSync(filePath));
+    return pdfBuffer;
+  } else if (fileExtension === ".docx") {
+    const result = await officeToPdf(fs.readFileSync(filePath));
+    return result;
+  } else if (fileExtension === ".xlsx") {
+    const pdfBuffer = await officeToPdf(fs.readFileSync(filePath));
+    return pdfBuffer;
+  } else {
+    throw new Error("Unsupported file type for conversion.");
+  }
+};
 
 // POST route for file upload
 router.post(

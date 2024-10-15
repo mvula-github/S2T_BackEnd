@@ -25,14 +25,14 @@ app.set("view engine", "ejs");
 
 app.use(cookieParser());
 
-app.use(
-  session({
-    secret: "secretPassword",
-    saveUninitialized: false,
-    resave: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 2, secure: true, httpOnly: true },
-  })
-);
+// app.use(
+//   session({
+//     secret: "secretPassword",
+//     saveUninitialized: false,
+//     resave: false,
+//     cookie: { maxAge: 1000 * 60 * 60 * 2, secure: true, httpOnly: true },
+//   })
+// );
 
 // Serve static files from 'uploads' folder (for accessing uploaded files)
 app.use("/uploads", express.static("uploads"));
@@ -41,12 +41,12 @@ app.use("/uploads", express.static("uploads"));
 //app.use("*", checkUser);
 
 // Test routes
-app.get("/api", (req, res) => {
+app.get(`/api`, (req, res) => {
   res.status(403).send({ msg: "Hello World" });
 });
 
-app.get("/landing", requireAuth, (req, res) => {
-  res.status(403).send({ msg: "privileged page" });
+app.get(`/api/landing`, requireAuth, (req, res) => {
+  res.status(200).send({ msg: "privileged page" });
 });
 
 // Root route for other routes
