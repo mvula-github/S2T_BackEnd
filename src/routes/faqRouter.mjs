@@ -11,11 +11,12 @@ import {
   viewAllFAQs,
   viewFAQbyId,
 } from "../controllers/faqhandler.mjs";
+import { requireAuth } from "../utils/middleware/middleware.mjs";
 
 const router = Router();
 
 //---------------------------------------------POST------------------------------------------------------
-router.post("/api/faqs", checkSchema(mainFAQvalidation), addFAQ);
+router.post("/api/faqs", requireAuth, checkSchema(mainFAQvalidation), addFAQ);
 
 //---------------------------------------------GET------------------------------------------------------
 

@@ -41,6 +41,6 @@ export const getReportsById = async (request, response) => {
 };
 
 export const getAllReports = async (request, response) => {
-  const allReports = await Rating.find();
+  const allReports = await Report.find();
   response.status(200).send(allReports);
 };

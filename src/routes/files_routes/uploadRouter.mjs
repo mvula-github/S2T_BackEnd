@@ -5,7 +5,10 @@ import Upload from "../../mongoose/schemas/upload.mjs"; // Import the upload sch
 import fs from "fs"; // Required for checking file existence
 import crypto from "crypto"; // For generating file hashes
 import officeToPdf from "office-to-pdf"; // For converting to PDF
-import { errorFileHandler } from "../../utils/middleware/middleware.mjs";
+import {
+  errorFileHandler,
+  requireAuth,
+} from "../../utils/middleware/middleware.mjs";
 import { addFileValidation } from "../../utils/validation/uploadValidation.mjs";
 import { validationResult, checkSchema } from "express-validator";
 import {
@@ -87,6 +90,7 @@ const convertToPDF = async (filePath) => {
 // POST route for file upload
 router.post(
   "/api/uploads",
+  requireAuth,
   upload.single("file"),
   checkSchema(addFileValidation),
   async (request, response) => {
@@ -97,15 +101,7 @@ router.post(
       return response.status(400).send(errors.array().map((err) => err.msg));
 
     try {
-      const {
-        fileName,
-        fileType,
-        subject,
-        grade,
-        year,
-        category,
-        description,
-      } = request.body;
+      const { subject, grade, year, category, description } = request.body;
 
       // Check for required fields
       if (!request.file) {
@@ -129,7 +125,11 @@ router.post(
 
       // Convert the file to PDF if necessary
       const convertedFilePath = await convertToPDF(filePath);
-      const finalFilePath = convertedFilePath || filePath; // Use the converted file path if conversion happened
+
+      // Delete the original file after conversion
+      const deletedFile = fs.unlinkSync(filePath); // Remove the original uploaded file
+
+      const finalFilePath = convertedFilePath; // Use the converted file path if conversion happened
 
       // Check if a file with the same name already exists in the storage folder
       const finalFileName = path.basename(finalFilePath);
@@ -140,11 +140,13 @@ router.post(
         )
       );
 
-      // if (fileExistsInFolder) {
-      //   return response
-      //     .status(400)
-      //     .send({ message: "A file with this name already exists in storage" });
-      // }
+      if (deletedFile) {
+        if (fileExistsInFolder) {
+          return response.status(400).send({
+            message: "A file with this name already exists in storage",
+          });
+        }
+      }
 
       // Create a new upload document in MongoDB
       const newFile = new Upload({
@@ -176,12 +178,10 @@ router.post(
 );
 
 //get all files
-router.get("/api/files", getAllFiles);
+router.get("/api/uploads", getAllFiles);
 
-router.patch("/api/files/:id/approve", approveFileById);
+router.patch("/api/uploads/:id/approve", requireAuth, approveFileById);
 
-router.patch("/api/files/:id/disapprove", disapproveFileById);
-
-router.delete("/api/files/:id", deleteFileById);
+router.patch("/api/uploads/:id/disapprove", requireAuth, disapproveFileById);
 
 export default router;

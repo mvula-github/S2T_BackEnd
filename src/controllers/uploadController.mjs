@@ -15,14 +15,16 @@ export const approveFileById = async (request, response) => {
 
   try {
     const file = await Upload.findById(id);
-    if (!file) return response.status(404).send("File not found");
+    if (!file) {
+      return response.status(404).send("File not found");
+    }
 
     file.approved = true;
     file.save();
 
     response.status(201).send("File aprroved successlly");
   } catch (err) {
-    return response.status(201).send(`${err}`);
+    return response.status(500).send(`${err}`);
   }
 };
 
@@ -33,9 +35,9 @@ export const disapproveFileById = async (request, response) => {
     const file = await Upload.findByIdAndDelete(id);
     if (!file) return response.status(404).send("File not found");
 
-    response.status(201).send("File disapproved successlly");
+    response.status(200).send("File disapproved successlly");
   } catch (err) {
-    return response.status(201).send(`${err}`);
+    return response.status(500).send(`${err}`);
   }
 };
 

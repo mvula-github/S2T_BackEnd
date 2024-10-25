@@ -4,14 +4,15 @@ import {
   getAllReports,
   getReportsById,
 } from "../../controllers/reportController.mjs";
+import { requireAuth } from "../../utils/middleware/middleware.mjs";
 
 const router = express.Router();
 
 // POST route for submitting a file report
 router.post("/api/reports/:fileId", createReport);
 
-router.get("/api/reports/:fileId", getReportsById);
+router.get("/api/reports/:fileId", requireAuth, getReportsById);
 
-router.get("/api/reports", getAllReports);
+router.get("/api/reports", requireAuth, getAllReports);
 
 export default router;

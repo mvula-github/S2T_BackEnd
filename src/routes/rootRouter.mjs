@@ -26,27 +26,3 @@ router.use(
 );
 
 export default router;
-
-/*
-
-      const originalFilename = request.file.originalname;
-      const fileExtension = path.extname(originalFilename);
-      const pdfFilename = originalFilename.replace(fileExtension, ".pdf");
-
-      // Check if the file extension is supported for conversion
-      if (
-        [".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt"].includes(
-          fileExtension
-        )
-      ) {
-        // Convert the document to PDF
-        await converter.convert(request.file.path, pdfFilename);
-
-        // Send a success response with the PDF filename
-        response.json({ message: "File converted successfully", pdfFilename });
-      } else {
-        // Handle unsupported file types
-        response.status(400).json({ error: "Unsupported file type" });
-      }
-
-*/

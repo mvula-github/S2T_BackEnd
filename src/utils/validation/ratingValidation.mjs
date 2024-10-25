@@ -1,7 +1,7 @@
 // Validation rules for file rating
 export const validateFileRating = {
   rating: {
-    isInt: { min: 1, max: 5 },
+    isInt: { options: { min: 1, max: 5 } },
     errorMessage: "Rating must be between 1 and 5",
   },
   comment: {

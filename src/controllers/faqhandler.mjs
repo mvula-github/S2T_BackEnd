@@ -3,11 +3,17 @@ import { faq } from "../mongoose/schemas/faq.mjs";
 
 export const addFAQ = async (request, response) => {
   const errorResult = validationResult(request);
-  console.log(errorResult);
 
   //handle the validations i.e. doesn't add invalid data to database
   if (!errorResult.isEmpty())
     return response.status(400).send(errors.array().map((err) => err.msg));
+
+  const { question } = request.body;
+  console.log(question);
+
+  const theFaq = await faq.findOne({ question: question });
+  console.log(theFaq);
+  if (theFaq) return response.status(400).send("Question already exist!!");
 
   //To know if the data is valid or not
   const data = matchedData(request);
@@ -18,7 +24,7 @@ export const addFAQ = async (request, response) => {
     await newFAQ.save();
     return response.status(201).send("Added Succesfully");
   } catch (err) {
-    return response.sendStatus(400);
+    return response.status(500).send(`Internal server error: ${err}`);
   }
 };
 

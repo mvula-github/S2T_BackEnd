@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { createApp } from "./createApp.mjs";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 mongoose
