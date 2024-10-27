@@ -4,6 +4,7 @@ import { User } from "../mongoose/schemas/user.mjs";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
 import { NotFoundError, ValidationError } from "../utils/classes/errors.mjs";
 import sendEmail from "../utils/email.mjs";
+import { console } from "inspector";
 
 //creating the jwt token
 const maxDuration = 2 * 24 * 60 * 60;
