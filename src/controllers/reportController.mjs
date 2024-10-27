@@ -1,4 +1,3 @@
-import { clearScreenDown } from "readline";
 import Report from "../mongoose/schemas/report.mjs"; // You would need to create a Report schema
 
 export const createReport = async (request, response) => {

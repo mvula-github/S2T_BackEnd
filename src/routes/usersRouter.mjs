@@ -15,7 +15,7 @@ router.use(express.json());
 
 //----------------------------------------GET--------------------------------------------
 //TO VIEW ALL USERS IN THE DATABASE
-router.get("/api/users", requireAuth, getAllUsers);
+router.get("/api/users", getAllUsers);
 
 //FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
 //to find users based in a filter query

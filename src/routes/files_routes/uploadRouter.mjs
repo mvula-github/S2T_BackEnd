@@ -13,7 +13,6 @@ import { addFileValidation } from "../../utils/validation/uploadValidation.mjs";
 import { validationResult, checkSchema } from "express-validator";
 import {
   approveFileById,
-  deleteFileById,
   disapproveFileById,
   getAllFiles,
 } from "../../controllers/uploadController.mjs";
