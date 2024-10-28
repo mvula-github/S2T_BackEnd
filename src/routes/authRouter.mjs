@@ -21,11 +21,7 @@ router.post("/api/auth/signup", checkSchema(addUserValidation), userSignUp);
 router.post("/api/auth/login", userLogin);
 
 //USER LOGOUT REQUEST
-router.post(
-  "/api/auth/logout",
-  requireAuth(["admin", "educator", "admin"]),
-  userLogout
-);
+router.post("/api/auth/logout", userLogout);
 
 //TO CHECK IF USER IS LOG IN STATUS
 router.get("/api/auth/status", userStatus);

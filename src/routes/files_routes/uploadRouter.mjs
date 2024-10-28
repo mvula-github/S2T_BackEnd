@@ -179,16 +179,8 @@ router.post(
 //get all files
 router.get("/api/uploads", getAllFiles);
 
-router.patch(
-  "/api/uploads/:id/approve",
-  requireAuth(["admin", "moderator"]),
-  approveFileById
-);
+router.patch("/api/uploads/:id/approve", approveFileById);
 
-router.patch(
-  "/api/uploads/:id/disapprove",
-  requireAuth(["admin", "moderator"]),
-  disapproveFileById
-);
+router.patch("/api/uploads/:id/disapprove", disapproveFileById);
 
 export default router;

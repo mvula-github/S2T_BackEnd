@@ -15,13 +15,10 @@ router.use(express.json());
 
 //----------------------------------------GET--------------------------------------------
 //TO VIEW ALL USERS IN THE DATABASE
-router.get("/api/users", requireAuth(["admin"]), getAllUsers);
-
-//FOR WHEN ADMIN WANTS TO VIEW SPECIFIC USERS BY ROLE OR CREDENTIALS
-//to find users based in a filter query
+router.get("/api/users", getAllUsers);
 
 //TO RETRIEVE A SPECIFIC USER BY ID
-router.get("/api/users/:_id", requireAuth(["admin"]), getUserById);
+router.get("/api/users/:_id", getUserById);
 
 //----------------------------------UPDATE----------------------------------------------
 router.patch(
@@ -32,6 +29,6 @@ router.patch(
 );
 
 //-------------------------------------------DELETE--------------------------------------------
-router.delete("/api/users/:_id", requireAuth(["admin"]), deleteUserById);
+router.delete("/api/users/:_id", deleteUserById);
 
 export default router;

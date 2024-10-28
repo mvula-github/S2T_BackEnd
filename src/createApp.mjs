@@ -10,7 +10,7 @@ export function createApp() {
   dotenv.config();
 
   const app = express();
-  app.use(cors());
+  app.use(cors({ credentials: true }));
 
   // Middleware Setup
   app.use(express.json()); // Parsing JSON request bodies
