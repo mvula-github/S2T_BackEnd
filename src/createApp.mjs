@@ -2,7 +2,7 @@ import express from "express";
 import rootRouter from "./routes/rootRouter.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import { checkUser, requireAuth } from "./utils/middleware/middleware.mjs";
+import { checkUser } from "./utils/middleware/middleware.mjs";
 import dotenv from "dotenv";
 import cors from "cors";
 

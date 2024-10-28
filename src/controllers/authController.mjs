@@ -5,11 +5,12 @@ import { requireAuth } from "../utils/middleware/middleware.mjs";
 import { NotFoundError, ValidationError } from "../utils/classes/errors.mjs";
 import sendEmail from "../utils/email.mjs";
 import { console } from "inspector";
-
+import dotenv from "dotenv";
+dotenv.config();
 //creating the jwt token
 const maxDuration = 2 * 24 * 60 * 60;
-const createToken = (id) => {
-  return jwt.sign({ id }, "secret signature", {
+const createToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: maxDuration,
   });
 };
@@ -36,7 +37,7 @@ export const userSignUp = async (request, response) => {
     const savedUser = await User.signup(email, data);
 
     //creating jwt token and cookie
-    const token = createToken(savedUser._id);
+    const token = createToken(savedUser._id, savedUser.role);
 
     response.cookie("jwt", token, {
       httpOnly: true,
@@ -58,7 +59,7 @@ export const userLogin = async (request, response) => {
     const user = await User.login(email, password);
 
     //creating jwt for user
-    const token = createToken(user._id);
+    const token = createToken(user._id, user.role);
     response.cookie("jwt", token, {
       httpOnly: true,
       maxAge: maxDuration * 1000,
@@ -119,7 +120,9 @@ export const userForgotPassword = async (request, response, next) => {
 };
 
 export const userStatus = (request, response) => {
-  return response.locals.user
-    ? response.status(200).send(response.locals.user.id)
-    : response.status(401).send(" User Not Authenticated");
+  if (response.locals.user) {
+    const { id, role } = response.locals.user;
+    return response.status(200).json({ id, role });
+  }
+  return response.status(401).send("User Not Authenticated");
 };

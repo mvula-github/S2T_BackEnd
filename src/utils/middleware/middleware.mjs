@@ -1,15 +1,17 @@
 import jwt from "jsonwebtoken";
 import { User } from "../../mongoose/schemas/user.mjs";
 import multer from "multer";
+import dotenv from "dotenv";
 
 //AUTHENTICATION OF jwt
 const requireAuth = (request, response, next) => {
+  dotenv.config();
   const token = request.cookies.jwt;
 
   //check if web token exist
   if (!token) return response.status(401).send("User needs to login");
 
-  jwt.verify(token, "secret signature", (err, decodedToken) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
     if (err) {
       console.log(err.message);
       return response.status(401).send("redirect user to login page");
@@ -26,7 +28,7 @@ const checkUser = (request, response, next) => {
 
   //check if web token exist
   if (token) {
-    jwt.verify(token, "secret signature", async (err, decodedToken) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
       if (err) {
         console.log(err.message);
         next();

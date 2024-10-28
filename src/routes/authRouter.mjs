@@ -34,7 +34,7 @@ router.post("/api/auth/login", userLogin);
 router.post("/api/auth/logout", requireAuth, userLogout);
 
 //TO CHECK IF USER IS LOG IN STATUS
-router.get("/api/auth/status", requireAuth, userStatus);
+router.get("/api/auth/status", userStatus);
 
 //for varification when euser forgot password
 router.post("/api/auth/forgotPassword", userForgotPassword);
