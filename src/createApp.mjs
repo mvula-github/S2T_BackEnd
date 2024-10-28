@@ -10,13 +10,11 @@ export function createApp() {
   dotenv.config();
 
   const app = express();
-
   app.use(cors());
 
   // Middleware Setup
   app.use(express.json()); // Parsing JSON request bodies
   app.use(cookieParser()); // Parse cookies
-  app.use(express.urlencoded({ extended: true }));
   app.set("view engine", "ejs");
 
   app.use(

@@ -2,11 +2,12 @@ import { validationResult, matchedData } from "express-validator";
 import jwt from "jsonwebtoken";
 import { User } from "../mongoose/schemas/user.mjs";
 import { requireAuth } from "../utils/middleware/middleware.mjs";
-import { NotFoundError, ValidationError } from "../utils/classes/errors.mjs";
+import { NotFoundError } from "../utils/classes/errors.mjs";
 import sendEmail from "../utils/email.mjs";
 import { console } from "inspector";
 import dotenv from "dotenv";
 dotenv.config();
+
 //creating the jwt token
 const maxDuration = 2 * 24 * 60 * 60;
 const createToken = (id, role) => {
@@ -37,13 +38,15 @@ export const userSignUp = async (request, response) => {
     const savedUser = await User.signup(email, data);
 
     //creating jwt token and cookie
-    const token = createToken(savedUser._id, savedUser.role);
+    const token = createToken(savedUser._id, savedUser.role); // Include role here
 
     response.cookie("jwt", token, {
       httpOnly: true,
       maxAge: maxDuration * 1000,
     });
-    return response.status(201).send(`Account created succesfully`);
+    return response
+      .status(201)
+      .send(`Account created succesfully, ${(savedUser._id, savedUser.role)}`);
   } catch (err) {
     response.status(500).send(`${err}`);
   }
@@ -59,13 +62,14 @@ export const userLogin = async (request, response) => {
     const user = await User.login(email, password);
 
     //creating jwt for user
-    const token = createToken(user._id, user.role);
+    const token = createToken(user._id, user.role); // Include role here
+
     response.cookie("jwt", token, {
       httpOnly: true,
       maxAge: maxDuration * 1000,
     });
 
-    response.status(200).send("Loggin Successful");
+    response.status(200).send(`Loggin Successful,  ${(user._id, user.role)}`);
   } catch (err) {
     response.status(400).send(`${err}`);
   }
