@@ -11,7 +11,7 @@ const router = express.Router();
 // POST route for submitting a file report
 router.post("/api/reports/:fileId", createReport);
 
-router.get("/api/reports/:fileId", requireAuth, getReportsById);
+router.get("/api/reports/:fileId", requireAuth(["admin"]), getReportsById);
 
 router.get("/api/reports", requireAuth, getAllReports);
 

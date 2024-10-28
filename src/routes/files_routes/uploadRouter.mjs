@@ -89,6 +89,7 @@ const convertToPDF = async (filePath) => {
 // POST route for file upload
 router.post(
   "/api/uploads",
+  requireAuth(["admin", "educator", "moderator"]),
   upload.single("file"),
   checkSchema(addFileValidation),
   async (request, response) => {
@@ -178,8 +179,16 @@ router.post(
 //get all files
 router.get("/api/uploads", getAllFiles);
 
-router.patch("/api/uploads/:id/approve", approveFileById);
+router.patch(
+  "/api/uploads/:id/approve",
+  requireAuth(["admin", "moderator"]),
+  approveFileById
+);
 
-router.patch("/api/uploads/:id/disapprove", disapproveFileById);
+router.patch(
+  "/api/uploads/:id/disapprove",
+  requireAuth(["admin", "moderator"]),
+  disapproveFileById
+);
 
 export default router;

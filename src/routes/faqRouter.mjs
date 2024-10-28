@@ -16,7 +16,12 @@ import { requireAuth } from "../utils/middleware/middleware.mjs";
 const router = Router();
 
 //---------------------------------------------POST------------------------------------------------------
-router.post("/api/faqs", requireAuth, checkSchema(mainFAQvalidation), addFAQ);
+router.post(
+  "/api/faqs",
+  requireAuth(["admin"]),
+  checkSchema(mainFAQvalidation),
+  addFAQ
+);
 
 //---------------------------------------------GET------------------------------------------------------
 
@@ -27,9 +32,14 @@ router.get("/api/faqs/:id", viewFAQbyId);
 
 //---------------------------------------------PATCH------------------------------------------------------
 //to update the category, question, or answer for the faq page
-router.patch("/api/faqs/:id", checkSchema(patchFAQvalidation), updateFAQ);
+router.patch(
+  "/api/faqs/:id",
+  requireAuth(["admin"]),
+  checkSchema(patchFAQvalidation),
+  updateFAQ
+);
 
 //---------------------------------------------DELETE------------------------------------------------------
-router.delete("/api/faqs/:id", deleteFAQ);
+router.delete("/api/faqs/:id", requireAuth(["admin"]), deleteFAQ);
 
 export default router;

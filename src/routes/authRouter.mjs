@@ -14,16 +14,6 @@ const router = Router();
 
 router.use(express.json());
 
-//To Display to signup page
-router.get("/api/auth/signup", (request, response) => {
-  response.render("SignUp Page");
-});
-
-//To display the Log in page
-router.get("api/auth/login", (request, response) => {
-  response.render("Log In");
-});
-
 //FOR WHEN USERS CREATE A NEW ACCOUNT
 router.post("/api/auth/signup", checkSchema(addUserValidation), userSignUp);
 
@@ -31,7 +21,11 @@ router.post("/api/auth/signup", checkSchema(addUserValidation), userSignUp);
 router.post("/api/auth/login", userLogin);
 
 //USER LOGOUT REQUEST
-router.post("/api/auth/logout", requireAuth, userLogout);
+router.post(
+  "/api/auth/logout",
+  requireAuth(["admin", "educator", "admin"]),
+  userLogout
+);
 
 //TO CHECK IF USER IS LOG IN STATUS
 router.get("/api/auth/status", userStatus);
